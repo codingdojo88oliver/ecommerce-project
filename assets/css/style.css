@@ -1,0 +1,147 @@
+header {
+	background-color: gray;
+	color: white;
+	margin-bottom: 25px;
+}
+
+#admin {
+	background-color: #901600;
+	color: white;
+}
+#admin .button {
+	color: white;
+}
+
+header section .row {
+	padding: 20px 20px 0px 20px;
+}
+
+header section div div:nth-child(2) {
+	text-align: right;
+}
+
+dt {
+	font-weight: bold;
+}
+
+dl dd:last-child {
+	font-style: italic;
+}
+
+table .button {
+	margin-bottom: 0px;
+}
+
+.products img {
+	width: 12rem;
+}
+
+.other-images img {
+	width: 3rem;
+}
+
+#simple-pagination, #filter-products, #sort-products, #add-product, #admin-navbar, #filter-products-by-status {
+	display:flex; 
+	justify-content:flex-end;
+}
+
+#search-product {
+	display:flex; 
+	justify-content:flex-start;	
+}
+
+#summary p {
+	margin-bottom: 5px;
+	text-align: right;
+}
+
+#summary .button {
+	padding-right: 0px;
+}
+
+#simple-pagination .button{
+	padding: 0 .5em !important;
+}
+
+#full-pagination {
+	display: flex;
+	justify-content: space-evenly;	
+}
+
+#full-pagination .button{
+	padding: 0 1em !important;
+}
+
+#product-name, #sort {
+	width: 150px;
+}
+
+#product-quantity, .quantity {
+	width: 70px !important;
+}
+
+#sort-products label, #filter-products-by-status label {
+	display: inline-block;
+	margin-right: 25px;
+	font-size: 1.4rem;
+	font-weight: normal;
+}
+
+#filter-products input:nth-child(2) {
+	padding: 0 .5em !important;
+}
+
+#admin-products-list th:last-child {
+	text-align: center;
+}
+
+.admin-login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+div.row .products {
+	display: flex;
+	justify-content: space-evenly;	
+}
+
+div.row .products img {
+	display: block;
+}
+
+div.row .products p {
+	display: inline-block;
+}
+
+div.row .products div p:nth-child(3) {
+	font-size: .8em;
+	margin-top: -20px;
+	margin-right: 5px;
+	z-index: 2;
+	position: relative;
+}
+
+.product input {
+	padding-left: 0px;
+}
+
+div.product .other-images {
+	display: flex;
+	justify-content: space-evenly;	
+}
+
+.product-description {
+	margin-top: 90px;
+}
+
+.total-summary p {
+	margin-bottom: 5px;
+	font-style: italic;
+}
+
+.total-summary span {
+	font-weight: bold;
+	font-style: normal;
+}

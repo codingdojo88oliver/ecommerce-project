@@ -163,7 +163,7 @@
 <?php 					foreach($products as $product) { ?>
 						<tr>
 							<td><img src="<?= json_decode($product['images'])[0] ?>"></td>
-							<td><?= $product['id'] ?></td>
+							<td><a href="/products/show/<?= $product['id'] ?>"><?= $product['id'] ?></a></td>
 							<td><?= $product['name'] ?></td>
 							<td><?= $product['inventory_count'] ?></td>
 							<td>123</td>

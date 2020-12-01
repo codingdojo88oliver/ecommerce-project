@@ -17,4 +17,11 @@ class Order extends CI_Model
 		return $this->db->query($query)->result_array();
 	}
 
+	public function get_order($id)
+	{
+		$query = "SELECT * FROM orders WHERE orders.id = ?";
+		$values = array($id);
+		return $this->db->query($query, $values)->row_array();
+	}
+
 }

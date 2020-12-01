@@ -40,6 +40,7 @@
 
 
 $route['default_controller'] = "projects";
+$route['cart'] = 'carts';
 $route['404_override'] = '';
 
 

@@ -55,28 +55,19 @@
 						</tr>
 					</thead>
 					<tbody>
+<?php 				foreach($products as $product) { ?>
 						<tr>
-							<td class="edit-name">Tshirt</td>
-							<td class="edit-price">$27</td>
+							<td class="edit-name"><?= $product['name'] ?></td>
+							<td class="edit-price">$<?= $product['price'] ?></td>
 							<td>
-								<input type="number" name="" value="1" class="quantity">
+								<input type="number" name="" value="<?= $cart[intval($product['id'])] ?>" class="quantity">
 							</td>
-							<td>$27</td>
+							<td>$<?= $product['price'] * $cart[intval($product['id'])] ?></td>
 							<td>
 								<i class="delete-item fa fa-trash-o" aria-hidden="true"></i>
 							</td>
 						</tr>
-						<tr>
-							<td class="edit-name">Pants</td>
-							<td class="edit-price">$25</td>
-							<td>
-								<input data-name="Pants" data-price="$25" type="number" name="" value="2" class="edit-item quantity">
-							</td>
-							<td>$25</td>
-							<td>
-								<i class="delete-item fa fa-trash-o" aria-hidden="true"></i>
-							</td>
-						</tr>
+<?php 				} ?>
 					</tbody>
 				</table>
 			</div>

@@ -35,6 +35,16 @@ class Item extends CI_Model
 		return $this->db->query($query, $values)->result_array();
 	}
 
+	public function get_cart_items($product_ids)
+	{
+		$values = implode(', ', $product_ids);
+		
+		$query = "SELECT * FROM products
+				  WHERE id IN ({$values})";
+
+		return $this->db->query($query)->result_array();
+	}
+
 	public function add_product($data)
 	{
 		$query = 'INSERT INTO products (user_id, name, description, images, price, inventory_count, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())';
@@ -62,6 +72,20 @@ class Item extends CI_Model
 		$values = array($data['name'], $data['description'], $id);
 
 		return $this->db->query($query, $values);
+	}
+
+	public function add_to_cart($data)
+	{
+		$query = "SELECT * FROM products
+				  WHERE id = ?
+				  AND inventory_count >= ?
+				  LIMIT 1";
+
+		$values = array($data['id'], $data['quantity']);
+
+		return $this->db->query($query, $values)->row_array();
+
+
 	}
 
 }

@@ -22,7 +22,7 @@
 		<section class="container">
 			<div class="row">
 				<div class="column"><h4>eCommerce Dojo</h4></div>
-				<div class="column column-50 column-offset-25"><a class="checkout-button" href="checkout.html">Cart (5)</a></div></div>
+				<div class="column column-50 column-offset-25"><a class="checkout-button" href="/cart">Cart (<?= $cart_count ?>)</a></div></div>
 			</div>
 		</section>
 	</header>
@@ -43,13 +43,16 @@
 			<div class="column column-78">
 				<div class="row">
 					<div class="product-description column column-78">
+						<p><?= $this->session->flashdata('errors'); ?></p>
+						<p><?= $this->session->flashdata('message'); ?></p>
 						<?= $product['description'] ?>
 					</div>
 				</div>
 				<div class="row" id="add-product">
-					<form action="checkout.html">
+					<form action="/carts/add_to_cart" method="POST">
 						<fieldset>
-							<input type="number" id="product-quantity" value="1">
+							<input type="hidden" name="id" value="<?= $product['id'] ?>">
+							<input type="number" name="quantity" id="product-quantity" placeholder="1">
 							<input class="button button-clear float-right" type="submit" value="add to cart">
 						</fieldset>
 					</form>						
@@ -58,6 +61,7 @@
 		</div>
 		<div class="row">
 			<div class="column">
+<?php 		if(count($similar_items)) { ?>
 				<h5>Similar Items</h5>
 				<div class="row">
 					<div class="products column">
@@ -70,6 +74,7 @@
 <?php 				} ?>
 					</div>
 				</div>
+<?php 		} ?>
 			</div>					
 		</div>
 	</div>

@@ -16,6 +16,14 @@ class Categories extends CI_Controller {
 
 	public function index()
 	{
+		$this->view_data['cart_count'] = 0;
+		if($this->session->userdata('cart')) {
+			$this->view_data['cart_count'] = 0;
+			foreach($this->session->userdata('cart') as $quantity) {
+				$this->view_data['cart_count'] += $quantity;
+			}
+		}
+
 		$this->load->model('Item');
 		$this->view_data['categories'] = $this->Category->get_categories();
 		$this->view_data['products'] = $this->Item->get_items();

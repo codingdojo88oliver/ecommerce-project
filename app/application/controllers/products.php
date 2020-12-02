@@ -62,6 +62,15 @@ class Products extends CI_Controller {
 
 	public function show($id)
 	{
+		$this->view_data['cart_count'] = 0;
+		
+		if($this->session->userdata('cart')) {
+			$this->view_data['cart_count'] = 0;
+			foreach($this->session->userdata('cart') as $quantity) {
+				$this->view_data['cart_count'] += $quantity;
+			}
+		}
+
 		$this->view_data['product'] = $this->Item->get_item($id);
 
 		$this->view_data['similar_items'] = $this->Item->get_similar_items($id);

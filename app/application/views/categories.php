@@ -22,7 +22,7 @@
 		<section class="container">
 			<div class="row">
 				<div class="column"><h4>eCommerce Dojo</h4></div>
-				<div class="column column-50 column-offset-25"><a class="checkout-button" href="checkout.html">Cart (5)</a></div>
+				<div class="column column-50 column-offset-25"><a class="checkout-button" href="/cart">Cart (<?= $cart_count ?>)</a></div>
 			</div>
 		</section>
 	</header>

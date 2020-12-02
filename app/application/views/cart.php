@@ -86,29 +86,36 @@
 			<div class="column column-25">
 				<form action="/carts/checkout" method="POST" id="payment-form">
 					<fieldset>
+						<!-- hidden inputs -->
+<?php 				foreach($products as $product) { ?>
+						<input type="hidden" name="cart" value="" id="hidden-cart">
+<?php 				} ?>
 						<h4>Shipping Information</h4>
-						<input type="text" placeholder="First Name" id="shipping-first-name">
-						<input type="text" placeholder="Last Name" id="shipping-last-name">
-						<input type="text" placeholder="Address" id="shipping-address">
-						<input type="text" placeholder="Address 2" id="shipping-address2">
-						<input type="text" placeholder="City" id="shipping-city">
-						<input type="text" placeholder="State" id="shipping-state">
-						<input type="text" placeholder="Zip Code" id="shipping-zip">
+						<input type="text" name="shipping_first_name" placeholder="First Name" id="shipping-first-name">
+						<input type="text" name="shipping_last_name" placeholder="Last Name" id="shipping-last-name">
+						<input type="text" name="shipping_address" placeholder="Address" id="shipping-address">
+						<input type="text" name="shipping_address2" placeholder="Address 2" id="shipping-address2">
+						<input type="text" name="shipping_city" placeholder="City" id="shipping-city">
+						<input type="text" name="shipping_state" placeholder="State" id="shipping-state">
+						<input type="text" name="shipping_zip" placeholder="Zip Code" id="shipping-zip">
 						<h4>Billing Information</h4>
 						<div>
 							<input type="checkbox" id="confirmField">
 							<label class="label-inline" for="confirmField">Same as Shipping</label>
 						</div>
-						<input type="text" placeholder="First Name" id="billing-first-name">
-						<input type="text" placeholder="Last Name" id="billing-last-name">
-						<input type="text" placeholder="Address" id="billing-address">
-						<input type="text" placeholder="Address 2" id="billing-address2">
-						<input type="text" placeholder="City" id="billing-city">
-						<input type="text" placeholder="State" id="billing-state">
-						<input type="text" placeholder="Zip Code" id="billing-zip">
-						<button type="submit" >Checkout</button>
+						<input type="text" name="billing_first_name" placeholder="First Name" id="billing-first-name">
+						<input type="text" name="billing_last_name" placeholder="Last Name" id="billing-last-name">
+						<input type="text" name="billing_address" placeholder="Address" id="billing-address">
+						<input type="text" name="billing_address2" placeholder="Address 2" id="billing-address2">
+						<input type="text" name="billing_city" placeholder="City" id="billing-city">
+						<input type="text" name="billing_state" placeholder="State" id="billing-state">
+						<input type="text" name="billing_zip" placeholder="Zip Code" id="billing-zip">
+						<button type="submit">Checkout</button>
 					</fieldset>
 				</form>				
+			</div>
+			<div class="column column-25" id="errors">
+				<div></div>
 			</div>
 		</div>
 	</div>
@@ -118,6 +125,8 @@
   
 <script type="text/javascript">
 
+
+	$('#hidden-cart').val(JSON.stringify('<?= json_encode($cart) ?>'));
 
 	$('#payment-form').on('submit', function(){
 		pay(<?= $total ?>);
@@ -136,7 +145,12 @@
 				console.log(token)
 
 				$.post('<?= base_url('carts/checkout'); ?>', { stripe_token_id: token.id, amount: amount }, function(response){
-					//redirect
+					if(response.success) {
+
+					}
+					else {
+						$("#errors div").html(response.message);
+					}
 				}, "json"); 
 			}
 		});

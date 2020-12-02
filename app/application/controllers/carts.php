@@ -70,20 +70,57 @@ class Carts extends CI_Controller {
 
 	public function checkout()
 	{
-        require_once('application/libraries/stripe-php/init.php');
+		$this->form_validation->set_rules("cart", "Cart", "required");
+		$this->form_validation->set_rules("amount", "Amount", "greater_than[0]|required");
+		$this->form_validation->set_rules("shipping_first_name", "Shipping First Name", "required");
+		$this->form_validation->set_rules("shipping_last_name", "Shipping Last Name", "required");
+		$this->form_validation->set_rules("shipping_address", "Shipping Address", "required");
+		$this->form_validation->set_rules("shipping_address2", "Shipping Address 2", "required");
+		$this->form_validation->set_rules("shipping_city", "Shipping City", "required");
+		$this->form_validation->set_rules("shipping_zip", "Shipping Zip", "required");
 
-        \Stripe\Stripe::setApiKey($this->config->item('stripe_api_key'));
-     
-        \Stripe\Charge::create ([
-                "amount" => 100 * 100,
-                "currency" => $this->config->item('stripe_currency'),
-                "source" => $this->input->post('stripe_token_id'),
-                "description" => "Test payment from itsolutionstuff.com." 
-        ]);
-            
-        $this->session->set_flashdata('success', 'Payment made successfully.');
-             
-		$data = array('success' => true, 'data'=> $stripe, 'redirect_url' => base_url('success'));
+		$this->form_validation->set_rules("billing_first_name", "Billing First Name", "required");
+		$this->form_validation->set_rules("billing_last_name", "Billing Last Name", "required");
+		$this->form_validation->set_rules("billing_address", "Billing Address", "required");
+		$this->form_validation->set_rules("billing_address2", "Billing Address 2", "required");
+		$this->form_validation->set_rules("billing_city", "Billing City", "required");
+		$this->form_validation->set_rules("billing_zip", "Billing Zip", "required");
+
+		if($this->form_validation->run() === FALSE)
+		{
+			$data =  array('success' => false, 'message' => validation_errors());
+		}
+		else
+		{
+
+			// check if products still exist in database and if quantity is still greater than the customer's quantity.
+
+			$product_ids = array();
+			$total = 0;
+			$cart = $this->input->post('cart');
+
+			foreach($cart as $product_id => $quantity) {
+				$product_ids[] = $product_id;
+			}
+
+			$this->view_data['products'] = $this->Item->get_cart_items($product_ids);	
+
+	        require_once('application/libraries/stripe-php/init.php');
+
+	        \Stripe\Stripe::setApiKey($this->config->item('stripe_api_key'));
+	     
+	        \Stripe\Charge::create ([
+	                "amount" => $this->input->post('amount') * 100,
+	                "currency" => $this->config->item('stripe_currency'),
+	                "source" => $this->input->post('stripe_token_id'),
+	                "description" => "Test payment from itsolutionstuff.com." 
+	        ]);
+	            
+	        $this->session->set_flashdata('success', 'Payment made successfully.');
+	             
+			$data = array('success' => true, 'data'=> $stripe, 'redirect_url' => base_url('success'));
+
+		}
  
         echo json_encode($data);
 	}

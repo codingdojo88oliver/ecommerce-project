@@ -17,6 +17,7 @@ class Carts extends CI_Controller {
 	{
 		$this->load->model('Item');
 		$product_ids = array();
+		$total = 0;
 		$this->view_data['cart'] = $cart = $this->session->userdata('cart');
 
 		foreach($cart as $product_id => $quantity) {
@@ -24,6 +25,12 @@ class Carts extends CI_Controller {
 		}
 
 		$this->view_data['products'] = $this->Item->get_cart_items($product_ids);	
+
+		foreach($this->view_data['products'] as $product) {
+			$total += $product['price'] * $cart[intval($product['id'])];
+		}
+
+		$this->view_data['total'] = $total;
 
 		$this->load->view('cart', $this->view_data);
 	}
@@ -61,10 +68,24 @@ class Carts extends CI_Controller {
 
 	}
 
-	public function your_cart()
+	public function checkout()
 	{
-		$get_data['items'] = $this->Item->getItems();
-		$this->load->view('items_cart', $get_data);
+        require_once('application/libraries/stripe-php/init.php');
+
+        \Stripe\Stripe::setApiKey($this->config->item('stripe_api_key'));
+     
+        \Stripe\Charge::create ([
+                "amount" => 100 * 100,
+                "currency" => $this->config->item('stripe_currency'),
+                "source" => $this->input->post('stripe_token_id'),
+                "description" => "Test payment from itsolutionstuff.com." 
+        ]);
+            
+        $this->session->set_flashdata('success', 'Payment made successfully.');
+             
+		$data = array('success' => true, 'data'=> $stripe, 'redirect_url' => base_url('success'));
+ 
+        echo json_encode($data);
 	}
 }
 

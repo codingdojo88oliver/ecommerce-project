@@ -14,14 +14,13 @@
 	<!-- Milligram CSS -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.css">
 
-	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" type="text/css" href="/../assets/css/style.css">
 
 	<!-- You should properly set the path from the main file. -->
 	<script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
 
 	<!-- Font Awesome -->
 	<script src="https://use.fontawesome.com/323a4b1822.js"></script>
-
 	<script type="text/javascript">
 		$(document).ready(function(){
 			$('.delete-item').on('click', function(){
@@ -74,10 +73,10 @@
 		</div>
 		<div class="row">
 			<div class="column" id="summary">
-				<p><strong>Total: $52</strong></p>
+				<p><strong>Total: $<?= $total ?></strong></p>
 				<form>
 					<fieldset>
-						<a class="button button-clear button-large float-right" href="products.html">continue shopping</a>
+						<a class="button button-clear button-large float-right" href="/categories">continue shopping</a>
 					</fieldset>
 				</form>						
 			</div>					
@@ -85,7 +84,7 @@
 
 		<div class="row">
 			<div class="column column-25">
-				<form>
+				<form action="/carts/checkout" method="POST" id="payment-form">
 					<fieldset>
 						<h4>Shipping Information</h4>
 						<input type="text" placeholder="First Name" id="shipping-first-name">
@@ -107,17 +106,46 @@
 						<input type="text" placeholder="City" id="billing-city">
 						<input type="text" placeholder="State" id="billing-state">
 						<input type="text" placeholder="Zip Code" id="billing-zip">
-						
-						<h4>Credit Card Details</h4>
-						<input type="text" placeholder="Credit Card Number" id="credit-card-number">
-						<input type="text" placeholder="CVV Number" id="cvv-number">
-						<label>Expiration:</label>
-						<input type="month" name="">
-						<input class="button-primary float-right" type="submit" value="Pay Now">
+						<button type="submit" >Checkout</button>
 					</fieldset>
 				</form>				
 			</div>
 		</div>
 	</div>
 </body>
+     
+<script src="https://checkout.stripe.com/checkout.js"></script>
+  
+<script type="text/javascript">
+
+
+	$('#payment-form').on('submit', function(){
+		pay(<?= $total ?>);
+
+		return false;
+	});
+
+	function pay(amount) {
+		var handler = StripeCheckout.configure({
+			key: '<?= $this->config->item('stripe_publishable_key') ?>',
+			locale: 'auto',
+			token: function (token) {
+				// You can access the token ID with `token.id`.
+				// Get the token ID to your server-side code for use.
+				console.log('Token Created!!');
+				console.log(token)
+
+				$.post('<?= base_url('carts/checkout'); ?>', { stripe_token_id: token.id, amount: amount }, function(response){
+					//redirect
+				}, "json"); 
+			}
+		});
+
+		handler.open({
+			name: 'Demo Site',
+			description: '2 widgets',
+			amount: <?= $total ?> * 100
+		});
+	}
+</script>
 </html>

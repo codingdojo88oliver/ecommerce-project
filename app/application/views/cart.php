@@ -23,9 +23,22 @@
 	<script src="https://use.fontawesome.com/323a4b1822.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function(){
-			$('.delete-item').on('click', function(){
+			$("#remove-item").on("submit", function(){
+				var form = $(this);
+
+				$.post(form.attr('action'), form.serialize(), function(data){}, "json");
+
+				return false;
+			});
+
+			$('.delete-item').on('click', function(e){
+				e.preventDefault();
 			    if (confirm('Are you sure?')) {
-			    	$(this).parent().parent().remove()
+			    	var form = $(this).parent().parent().find("#remove-item");
+
+			    	$.post(form.attr('action'), form.serialize(), function(data){}, "json");
+
+			    	$(this).parent().parent().remove();
 			    }				
 			})
 		});
@@ -56,6 +69,9 @@
 					<tbody>
 <?php 				foreach($products as $product) { ?>
 						<tr>
+							<form id="remove-item" method="POST" action="/carts/remove">
+								<input type="hidden" name="product_id" value="<?= $product['id'] ?>">
+							</form>
 							<td class="edit-name"><?= $product['name'] ?></td>
 							<td class="edit-price">$<?= $product['price'] ?></td>
 							<td>
@@ -82,6 +98,7 @@
 			</div>					
 		</div>
 
+<?php 	if($total != 0) { ?>
 		<div class="row">
 			<div class="column column-25">
 				<form action="/carts/checkout" method="POST" id="payment-form">
@@ -91,25 +108,25 @@
 						<input type="hidden" name="amount" value=<?= $total ?>>
 
 						<h4>Shipping Information</h4>
-						<input type="text" name="shipping_first_name" placeholder="First Name" id="shipping-first-name">
-						<input type="text" name="shipping_last_name" placeholder="Last Name" id="shipping-last-name">
-						<input type="text" name="shipping_address" placeholder="Address" id="shipping-address">
-						<input type="text" name="shipping_address2" placeholder="Address 2" id="shipping-address2">
-						<input type="text" name="shipping_city" placeholder="City" id="shipping-city">
-						<input type="text" name="shipping_state" placeholder="State" id="shipping-state">
-						<input type="text" name="shipping_zip" placeholder="Zip Code" id="shipping-zip">
+						<input value="Ghost" type="text" name="shipping_first_name" placeholder="First Name" id="shipping-first-name">
+						<input value="Saruman" type="text" name="shipping_last_name" placeholder="Last Name" id="shipping-last-name">
+						<input value="242 San Vicente Street" type="text" name="shipping_address" placeholder="Address" id="shipping-address">
+						<input value="Barangay Pangabugan" type="text" name="shipping_address2" placeholder="Address 2" id="shipping-address2">
+						<input value="Butuan City" type="text" name="shipping_city" placeholder="City" id="shipping-city">
+						<input value="ADN" type="text" name="shipping_state" placeholder="State" id="shipping-state">
+						<input value="8600" type="text" name="shipping_zip" placeholder="Zip Code" id="shipping-zip">
 						<h4>Billing Information</h4>
 						<div>
 							<input type="checkbox" id="confirmField">
 							<label class="label-inline" for="confirmField">Same as Shipping</label>
 						</div>
-						<input type="text" name="billing_first_name" placeholder="First Name" id="billing-first-name">
-						<input type="text" name="billing_last_name" placeholder="Last Name" id="billing-last-name">
-						<input type="text" name="billing_address" placeholder="Address" id="billing-address">
-						<input type="text" name="billing_address2" placeholder="Address 2" id="billing-address2">
-						<input type="text" name="billing_city" placeholder="City" id="billing-city">
-						<input type="text" name="billing_state" placeholder="State" id="billing-state">
-						<input type="text" name="billing_zip" placeholder="Zip Code" id="billing-zip">
+						<input value="Ghost" type="text" name="billing_first_name" placeholder="First Name" id="billing-first-name">
+						<input value="Saruman" type="text" name="billing_last_name" placeholder="Last Name" id="billing-last-name">
+						<input value="Block 1 Lot 2 Phase 1" type="text" name="billing_address" placeholder="Address" id="billing-address">
+						<input value="Emenvil Subdivision" type="text" name="billing_address2" placeholder="Address 2" id="billing-address2">
+						<input value="Butuan City" type="text" name="billing_city" placeholder="City" id="billing-city">
+						<input value="ADN" type="text" name="billing_state" placeholder="State" id="billing-state">
+						<input value="8600" type="text" name="billing_zip" placeholder="Zip Code" id="billing-zip">
 						<button type="submit">Checkout</button>
 					</fieldset>
 				</form>				
@@ -118,6 +135,7 @@
 				<div></div>
 			</div>
 		</div>
+<?php 	} ?>
 	</div>
 </body>
      
@@ -139,14 +157,9 @@
 			token: function (token) {
 				// You can access the token ID with `token.id`.
 				// Get the token ID to your server-side code for use.
-				console.log('Token Created!!');
-				console.log(token)
-				form.append("<input type='hidden' name='stripe_token_id' value='"+ token.id +"' ");
-
-				console.log(form.serialize())
-				$.post(form.attr('action'), form.serialize(), function(response){
+				$.post(form.attr('action'), form.serialize() + "&stripe_token_id=" + token.id + "&email=" + token.email, function(response){
 					if(response.success) {
-
+						location.href = response.redirect_url;
 					}
 					else {
 						$("#errors div").html(response.message);

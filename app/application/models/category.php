@@ -16,7 +16,7 @@ class Category extends CI_Model
 
 	public function get_products($category_id)
 	{
-		$query = 'SELECT * FROM products
+		$query = 'SELECT products.* FROM products
 				  INNER JOIN product_categories
 				  ON products.id = product_categories.product_id
 				  WHERE product_categories.category_id = ?';

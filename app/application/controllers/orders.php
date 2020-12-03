@@ -34,6 +34,11 @@ class Orders extends CI_Controller {
 
 		$this->load->view('admin/order_show', $this->view_data);
 	}
+
+	public function success()
+	{
+		$this->load->view('success');
+	}
 }
 
 //end of order controller

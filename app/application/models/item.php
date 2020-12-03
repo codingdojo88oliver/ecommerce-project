@@ -84,8 +84,31 @@ class Item extends CI_Model
 		$values = array($data['id'], $data['quantity']);
 
 		return $this->db->query($query, $values)->row_array();
+	}
 
+	public function decrease_item_inventory_count($cart, $stock)
+	{
+		$new_stock_string = "";
 
+		$new_stock = array();
+
+		foreach ($stock as $id => $count) {
+			if(isset($cart[$id])) {
+				$new_stock[$id] = $count - $cart[$id];
+			}
+		}
+
+		foreach($new_stock as $key => $value) {
+			$new_stock_string .= "(" . $key . ", " . $value . "), ";
+		}
+
+		$new_stock_string = rtrim(trim($new_stock_string), ',');
+
+		$query = "INSERT INTO products (id, inventory_count)
+				  VALUES ". $new_stock_string . " 
+				  ON DUPLICATE KEY UPDATE inventory_count = VALUES(inventory_count);";
+
+		return $this->db->query($query);
 	}
 
 }

@@ -87,9 +87,9 @@
 				<form action="/carts/checkout" method="POST" id="payment-form">
 					<fieldset>
 						<!-- hidden inputs -->
-<?php 				foreach($products as $product) { ?>
-						<input type="hidden" name="cart" value="" id="hidden-cart">
-<?php 				} ?>
+						<input type="hidden" name="cart" value=<?= json_encode($cart) ?>>
+						<input type="hidden" name="amount" value=<?= $total ?>>
+
 						<h4>Shipping Information</h4>
 						<input type="text" name="shipping_first_name" placeholder="First Name" id="shipping-first-name">
 						<input type="text" name="shipping_last_name" placeholder="Last Name" id="shipping-last-name">
@@ -124,17 +124,15 @@
 <script src="https://checkout.stripe.com/checkout.js"></script>
   
 <script type="text/javascript">
-
-
-	$('#hidden-cart').val(JSON.stringify('<?= json_encode($cart) ?>'));
+	var form = $("#payment-form");
 
 	$('#payment-form').on('submit', function(){
-		pay(<?= $total ?>);
+		pay(form);
 
 		return false;
 	});
 
-	function pay(amount) {
+	function pay(form) {
 		var handler = StripeCheckout.configure({
 			key: '<?= $this->config->item('stripe_publishable_key') ?>',
 			locale: 'auto',
@@ -143,8 +141,10 @@
 				// Get the token ID to your server-side code for use.
 				console.log('Token Created!!');
 				console.log(token)
+				form.append("<input type='hidden' name='stripe_token_id' value='"+ token.id +"' ");
 
-				$.post('<?= base_url('carts/checkout'); ?>', { stripe_token_id: token.id, amount: amount }, function(response){
+				console.log(form.serialize())
+				$.post(form.attr('action'), form.serialize(), function(response){
 					if(response.success) {
 
 					}

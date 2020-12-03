@@ -70,57 +70,85 @@ class Carts extends CI_Controller {
 
 	public function checkout()
 	{
-		$this->form_validation->set_rules("cart", "Cart", "required");
-		$this->form_validation->set_rules("amount", "Amount", "greater_than[0]|required");
-		$this->form_validation->set_rules("shipping_first_name", "Shipping First Name", "required");
-		$this->form_validation->set_rules("shipping_last_name", "Shipping Last Name", "required");
-		$this->form_validation->set_rules("shipping_address", "Shipping Address", "required");
-		$this->form_validation->set_rules("shipping_address2", "Shipping Address 2", "required");
-		$this->form_validation->set_rules("shipping_city", "Shipping City", "required");
-		$this->form_validation->set_rules("shipping_zip", "Shipping Zip", "required");
+		// $this->form_validation->set_rules("cart", "Cart", "required");
+		// $this->form_validation->set_rules("amount", "Amount", "greater_than[0]|required");
+		// $this->form_validation->set_rules("shipping_first_name", "Shipping First Name", "required");
+		// $this->form_validation->set_rules("shipping_last_name", "Shipping Last Name", "required");
+		// $this->form_validation->set_rules("shipping_address", "Shipping Address", "required");
+		// $this->form_validation->set_rules("shipping_address2", "Shipping Address 2", "required");
+		// $this->form_validation->set_rules("shipping_city", "Shipping City", "required");
+		// $this->form_validation->set_rules("shipping_zip", "Shipping Zip", "required");
 
-		$this->form_validation->set_rules("billing_first_name", "Billing First Name", "required");
-		$this->form_validation->set_rules("billing_last_name", "Billing Last Name", "required");
-		$this->form_validation->set_rules("billing_address", "Billing Address", "required");
-		$this->form_validation->set_rules("billing_address2", "Billing Address 2", "required");
-		$this->form_validation->set_rules("billing_city", "Billing City", "required");
-		$this->form_validation->set_rules("billing_zip", "Billing Zip", "required");
+		// $this->form_validation->set_rules("billing_first_name", "Billing First Name", "required");
+		// $this->form_validation->set_rules("billing_last_name", "Billing Last Name", "required");
+		// $this->form_validation->set_rules("billing_address", "Billing Address", "required");
+		// $this->form_validation->set_rules("billing_address2", "Billing Address 2", "required");
+		// $this->form_validation->set_rules("billing_city", "Billing City", "required");
+		// $this->form_validation->set_rules("billing_zip", "Billing Zip", "required");
 
-		if($this->form_validation->run() === FALSE)
-		{
-			$data =  array('success' => false, 'message' => validation_errors());
-		}
-		else
-		{
+		// if($this->form_validation->run() === FALSE)
+		// {
+		// 	$data =  array('success' => false, 'message' => validation_errors());
+		// }
+		// else
+		// {
 
-			// check if products still exist in database and if quantity is still greater than the customer's quantity.
-
+			// check if products still exist in database 
 			$product_ids = array();
 			$total = 0;
-			$cart = $this->input->post('cart');
+			$cart = json_decode($this->input->post('cart'), true);
 
 			foreach($cart as $product_id => $quantity) {
 				$product_ids[] = $product_id;
 			}
+			$this->load->model('Item');
+			$products = $this->Item->get_cart_items($product_ids);	
 
-			$this->view_data['products'] = $this->Item->get_cart_items($product_ids);	
+			if(empty($products)) {
+				// error
+			} 
+			else {
+				// and if quantity is still greater than the customer's quantity.
+				$for_checkout_ids 		= array();
+				$not_available_items 	= "";
 
-	        require_once('application/libraries/stripe-php/init.php');
+				foreach($products as $product) {
+					if(isset($cart[$product['id']]) && $product['inventory_count'] >= $cart[$product['id']]) {
+						// take note of the products that we can checkout.
+						$for_checkout_ids[$product['id']] = $product['inventory_count'];
+					} else {
+						$not_available_items[] .= $product['name'] . " ";
+					}
+				}
 
-	        \Stripe\Stripe::setApiKey($this->config->item('stripe_api_key'));
-	     
-	        \Stripe\Charge::create ([
-	                "amount" => $this->input->post('amount') * 100,
-	                "currency" => $this->config->item('stripe_currency'),
-	                "source" => $this->input->post('stripe_token_id'),
-	                "description" => "Test payment from itsolutionstuff.com." 
-	        ]);
-	            
-	        $this->session->set_flashdata('success', 'Payment made successfully.');
+				if(empty($not_available_items)) {
+					// decrease item inventory_quantity
+
+					$this->Item->decrease_item_inventory_count($cart, $for_checkout_ids);
+					die();
+
+			        require_once('application/libraries/stripe-php/init.php');
+
+			        \Stripe\Stripe::setApiKey($this->config->item('stripe_api_key'));
+			     
+			        \Stripe\Charge::create ([
+			                "amount" => $this->input->post('amount') * 100,
+			                "currency" => $this->config->item('stripe_currency'),
+			                "source" => $this->input->post('stripe_token_id'),
+			                "description" => "Test puchase successful!" 
+			        ]);
+			            
+			        $this->session->set_flashdata('success', 'Payment made successfully.');
+				} else {
+					// return with error.
+					
+					$data = array('success' => false, 'message' => "<p>These items are no longer available: " . $not_available_items . ". You can either remove the item, or reduce the quantity.</p>");
+				}
+			}
 	             
 			$data = array('success' => true, 'data'=> $stripe, 'redirect_url' => base_url('success'));
 
-		}
+		// }
  
         echo json_encode($data);
 	}

@@ -33,9 +33,15 @@ class Products extends CI_Controller {
 			$this->load->library('upload', $config);
 
 	        $images = array();
+	        $files 	= $_FILES['images'];
 
 	        foreach ($_FILES['images']['name'] as $key => $image) {
-
+				$_FILES['images[]']['name']= $files['name'][$key];
+	            $_FILES['images[]']['type']= $files['type'][$key];
+	            $_FILES['images[]']['tmp_name']= $files['tmp_name'][$key];
+	            $_FILES['images[]']['error']= $files['error'][$key];
+	            $_FILES['images[]']['size']= $files['size'][$key];
+	            
 	            $images[] = "/assets/images/uploads/" . $image;
 
 	            $config['file_name'] = $image;

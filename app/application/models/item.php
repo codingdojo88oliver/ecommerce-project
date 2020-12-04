@@ -58,9 +58,14 @@ class Item extends CI_Model
 
 	public function remove_product($id)
 	{
-		$query = "DELETE FROM products WHERE id = ?";
-		$values = array($id);
-		return $this->db->query($query, $values);
+		$query1 = "DELETE FROM product_categories WHERE product_id = ?";
+		$values1 = array($id);
+
+		$this->db->query($query1, $values1);
+
+		$query2 = "DELETE FROM products WHERE id = ?";
+		$values2 = array($id);
+		return $this->db->query($query2, $values2);
 	}
 
 	public function update_product($id, $data)

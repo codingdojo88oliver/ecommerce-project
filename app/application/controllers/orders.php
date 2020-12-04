@@ -16,32 +16,37 @@ class Orders extends CI_Controller {
 
 	public function show($id)
 	{
-		$this->view_data['order'] = $this->Order->get_order($id);
+		if($this->user_session['role'] == 1) {
+			$this->view_data['order'] = $this->Order->get_order($id);
 
-		switch ($this->view_data['order']['status']) {
-			case ORDER_IN_PROGRESS:
-				$this->view_data['order']['status'] = 'Order in Progress';
-				break;
-			case ORDER_SHIPPED:
-				$this->view_data['order']['status'] = 'Order Shipped';
-				break;
-			case ORDER_RECEIVED:
-				$this->view_data['order']['status'] = 'Order Received';
-				break;
-			case ORDER_CANCELLED:
-				$this->view_data['order']['status'] = 'Order Cancelled';
-				break;
+			switch ($this->view_data['order']['status']) {
+				case ORDER_IN_PROGRESS:
+					$this->view_data['order']['status'] = 'Order in Progress';
+					break;
+				case ORDER_SHIPPED:
+					$this->view_data['order']['status'] = 'Order Shipped';
+					break;
+				case ORDER_RECEIVED:
+					$this->view_data['order']['status'] = 'Order Received';
+					break;
+				case ORDER_CANCELLED:
+					$this->view_data['order']['status'] = 'Order Cancelled';
+					break;
+				
+				default:
+					# code...
+					break;
+			}
+
+			$cart = json_decode($this->view_data['order']['cart']);
 			
-			default:
-				# code...
-				break;
+			$this->view_data['products'] = $cart->products;
+
+			$this->load->view('admin/order_show', $this->view_data);
+		} else {
+			$this->session->set_flashdata("error", "Unauthorized access!");
+			redirect(base_url('admin'));
 		}
-
-		$cart = json_decode($this->view_data['order']['cart']);
-		
-		$this->view_data['products'] = $cart->products;
-
-		$this->load->view('admin/order_show', $this->view_data);
 	}
 
 	public function success()

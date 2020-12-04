@@ -22,73 +22,72 @@ class Products extends CI_Controller {
 
 	public function create()
 	{
-		$product_info = $this->input->post();
+		if($this->user_session['role'] == 1) {
+			$product_info = $this->input->post();
 
-		$config['upload_path'] = './assets/images/uploads/';
-		$config['allowed_types'] = 'gif|jpg|jpeg|png';
-		$config['max_size']	= '1000';
-		$config['max_width']  = '2097';
-		$config['max_height']  = '1411';
-		$this->load->library('upload', $config);
+			$config['upload_path'] = './assets/images/uploads/';
+			$config['allowed_types'] = 'gif|jpg|jpeg|png';
+			$config['max_size']	= '1000';
+			$config['max_width']  = '2097';
+			$config['max_height']  = '1411';
+			$this->load->library('upload', $config);
 
-        $images = array();
-        $files 	= $_FILES['images'];
+	        $images = array();
 
-        foreach ($_FILES['images']['name'] as $key => $image) {
-            $_FILES['images[]']['name']= $files['name'][$key];
-            $_FILES['images[]']['type']= $files['type'][$key];
-            $_FILES['images[]']['tmp_name']= $files['tmp_name'][$key];
-            $_FILES['images[]']['error']= $files['error'][$key];
-            $_FILES['images[]']['size']= $files['size'][$key];
+	        foreach ($_FILES['images']['name'] as $key => $image) {
 
-            $images[] = "/assets/images/uploads/" . $image;
+	            $images[] = "/assets/images/uploads/" . $image;
 
-            $config['file_name'] = $image;
+	            $config['file_name'] = $image;
 
-            $this->upload->initialize($config);
+	            $this->upload->initialize($config);
 
-            if ($this->upload->do_upload('images[]')) {
-            	$this->upload->data();
-            } else {
-				$get_data = array('error' => $this->upload->display_errors());
-				$this->session->set_flashdata('error', $get_data['error']);
-            }
-        }
+	            if ($this->upload->do_upload('images[]')) {
+	            	$this->upload->data();
+	            } else {
+					$get_data = array('error' => $this->upload->display_errors());
+					$this->session->set_flashdata('error', $get_data['error']);
+	            }
+	        }
 
-        if($images) {
-        	$product_info['file_names'] = $images;
-        }
+	        if($images) {
+	        	$product_info['file_names'] = $images;
+	        }
 
-		$this->load->library("form_validation");
-		$this->form_validation->set_rules("name", "Name", "trim|required");
-		$this->form_validation->set_rules("description", "Description", "trim|required");
-		$this->form_validation->set_rules("inventory_count", "Quantity", "trim|required");
-		$this->form_validation->set_rules("price", "Price", "trim|required");
-		$this->form_validation->set_rules("categories", "Categories", "trim|required");
+			$this->load->library("form_validation");
+			$this->form_validation->set_rules("name", "Name", "trim|required");
+			$this->form_validation->set_rules("description", "Description", "trim|required");
+			$this->form_validation->set_rules("inventory_count", "Quantity", "trim|required");
+			$this->form_validation->set_rules("price", "Price", "trim|required");
+			$this->form_validation->set_rules("categories", "Categories", "trim|required");
 
-		if($this->form_validation->run() === FALSE)
-		{
-			$this->session->set_flashdata("error", validation_errors());
-		}
-		else
-		{
-			if($this->input->post('category')) {
-				// create new category
-				$this->load->model('Category');
-				$category_id = $this->Category->add_category($this->input->post('category'));
-			} else {
-				$category_id = $this->input->post('categories');
+			if($this->form_validation->run() === FALSE)
+			{
+				$this->session->set_flashdata("error", validation_errors());
+			}
+			else
+			{
+				if($this->input->post('category')) {
+					// create new category
+					$this->load->model('Category');
+					$category_id = $this->Category->add_category($this->input->post('category'));
+				} else {
+					$category_id = $this->input->post('categories');
+				}
+
+				$product_id = $this->Item->add_product($product_info);
+
+				$this->load->model('Product_Category');
+				$this->Product_Category->add_product_category($product_id, $category_id);
+				$this->session->set_flashdata('message', 'Product Successfully Added!');
 			}
 
-			$product_id = $this->Item->add_product($product_info);
 
-			$this->load->model('Product_Category');
-			$this->Product_Category->add_product_category($product_id, $category_id);
-			$this->session->set_flashdata('message', 'Product Successfully Added!');
+			redirect(base_url('admin/products'));
+		} else {
+			$this->session->set_flashdata("error", "Unauthorized access!");
+			redirect(base_url('admin'));
 		}
-
-
-		redirect(base_url('admin/products'));
 	}
 
 	public function show($id)
@@ -111,16 +110,26 @@ class Products extends CI_Controller {
 
 	public function remove($id)
 	{
-		$this->Item->remove_product($id);
-		$this->session->set_flashdata('messages', 'Successfully deleted a product!');
-		redirect(base_url('admin/products'));
+		if($this->user_session['role'] == 1) {
+			$this->Item->remove_product($id);
+			$this->session->set_flashdata('messages', 'Successfully deleted a product!');
+			redirect(base_url('admin/products'));
+		} else {
+			$this->session->set_flashdata("error", "Unauthorized access!");
+			redirect(base_url('admin'));
+		}
 	}
 
 	public function update($id)
 	{
-		$this->Item->update_product($id, $this->input->post());
-		$this->session->set_flashdata('messages', 'Successfully updated a product!');
-		redirect(base_url('admin/products'));
+		if($this->user_session['role'] == 1) {
+			$this->Item->update_product($id, $this->input->post());
+			$this->session->set_flashdata('messages', 'Successfully updated a product!');
+			redirect(base_url('admin/products'));
+		} else {
+			$this->session->set_flashdata("error", "Unauthorized access!");
+			redirect(base_url('admin'));
+		}
 	}
 }
 

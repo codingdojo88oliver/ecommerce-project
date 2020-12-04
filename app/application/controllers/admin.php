@@ -15,7 +15,11 @@ class Admin extends CI_Controller {
 	
 	public function index()
 	{
-		$this->load->view("login");
+		if($this->user_session['role'] == 0) {		
+			$this->load->view("login");
+		} else {
+			redirect(base_url('admin/orders'));
+		}
 	}
 	
 	public function login()
@@ -49,31 +53,41 @@ class Admin extends CI_Controller {
 	
 	public function orders()
 	{
-		$this->load->model('Order');
-		$orders = $this->Order->get_orders();
-		foreach ($orders as $key => $order) {
-			$this->view_data['orders'][] = [
-				'id' 				=> $order['id'],
-				'user_id' 			=> $order['user_id'],
-				'name' 				=> $order['name'],
-				'date' 				=> $order['order_date'],
-				'billing_address'   => $order['billing_address'],
-				'status' 			=> $order['status'],
-			];
-		}
 
-		$this->load->view('admin/orders', $this->view_data);
+		if($this->user_session['role'] == 1) {
+			$this->load->model('Order');
+			$orders = $this->Order->get_orders();
+			foreach ($orders as $key => $order) {
+				$this->view_data['orders'][] = [
+					'id' 				=> $order['id'],
+					'user_id' 			=> $order['user_id'],
+					'name' 				=> $order['name'],
+					'date' 				=> $order['order_date'],
+					'billing_address'   => $order['billing_address'],
+					'status' 			=> $order['status'],
+				];
+			}
+
+			$this->load->view('admin/orders', $this->view_data);
+		} else {
+			redirect(base_url('admin'));
+		}
 	}
 	
 	public function products()
 	{
-		$this->load->model('Item');
-		$this->load->model('Category');
 
-		$this->view_data['products'] 	= $this->Item->get_items();
-		$this->view_data['categories'] 	= $this->Category->get_categories();
-		
-		$this->load->view('admin/products', $this->view_data);
+		if($this->user_session['role'] == 1) {
+			$this->load->model('Item');
+			$this->load->model('Category');
+
+			$this->view_data['products'] 	= $this->Item->get_items();
+			$this->view_data['categories'] 	= $this->Category->get_categories();
+			
+			$this->load->view('admin/products', $this->view_data);
+		} else {
+			redirect(base_url('admin'));
+		}
 	}
 
 	public function logout()

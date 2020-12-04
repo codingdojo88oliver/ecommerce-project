@@ -78,10 +78,10 @@ class Item extends CI_Model
 	{
 		$query = "SELECT * FROM products
 				  WHERE id = ?
-				  AND inventory_count >= ?
+				  AND inventory_count >= 1
 				  LIMIT 1";
 
-		$values = array($data['id'], $data['quantity']);
+		$values = array($data['id']);
 
 		return $this->db->query($query, $values)->row_array();
 	}

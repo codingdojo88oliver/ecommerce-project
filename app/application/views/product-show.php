@@ -29,7 +29,7 @@
 	<div class="container">
 		<div class="row">
 			<div class="column column-20 product">
-				<input class="button button-clear" type="submit" value="Go Back">
+				<a href="/categories" class="button button-clear">Go Back</a>
 				<h4><?= $product['name'] ?></h4>
 				<img src="<?= json_decode($product['images'])[0] ?>">
 				<div class="column other-images">

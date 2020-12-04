@@ -23,23 +23,41 @@
 	<script src="https://use.fontawesome.com/323a4b1822.js"></script>
 	<script type="text/javascript">
 		$(document).ready(function(){
-			$("#remove-item").on("submit", function(){
-				var form = $(this);
-
-				$.post(form.attr('action'), form.serialize(), function(data){}, "json");
-
-				return false;
-			});
-
 			$('.delete-item').on('click', function(e){
 				e.preventDefault();
 			    if (confirm('Are you sure?')) {
-			    	var form = $(this).parent().parent().find("#remove-item");
+			    	var old_total 				= $(".hidden-total").val();
+			    	var this_item_price 		= $(this).parent().parent().find(".price").text();
+			    	var new_total 				= old_total - this_item_price.replace("$", "");
+			    	var form = $(this).parent().parent().find("#cart-item");
 
-			    	$.post(form.attr('action'), form.serialize(), function(data){}, "json");
-
+			    	$(".hidden-total").val(new_total.toFixed(2));
+			    	$(".total").html("<strong>Total: $"+ new_total.toFixed(2) +"</strong>");
 			    	$(this).parent().parent().remove();
+
+			    	$.post("/carts/remove", form.serialize(), function(data){}, "json");
 			    }				
+			});
+
+			$('.quantity').on('change', function(e){
+				var old_total 				= $(".hidden-total").val();
+				var input 					= $(this);
+
+				if(input.val() <= 0) {
+					input.parent().parent().find('.delete-item').click();
+				} else {
+					var this_item_price 		= input.parent().parent().find(".price").text();
+					var total_minus_this_item 	= old_total - this_item_price.replace("$", "");
+					var form 					= input.parent().parent().find("#cart-item");
+					var price 					= parseInt(input.val()) * input.parent().parent().find(".edit-price").data('price');
+					var new_total 				= total_minus_this_item + price;
+
+					input.parent().parent().find(".price").text("$" + price.toFixed(2));
+					$(".hidden-total").val(new_total.toFixed(2));
+					$(".total").html("<strong>Total: $"+ new_total.toFixed(2) +"</strong>");
+					
+					$.post("/carts/update", form.serialize() + "&quantity=" + input.val(), function(data){}, "json");
+				}
 			})
 		});
 	</script>
@@ -69,15 +87,15 @@
 					<tbody>
 <?php 				foreach($products as $product) { ?>
 						<tr>
-							<form id="remove-item" method="POST" action="/carts/remove">
+							<form id="cart-item" method="POST" action="">
 								<input type="hidden" name="product_id" value="<?= $product['id'] ?>">
 							</form>
 							<td class="edit-name"><?= $product['name'] ?></td>
-							<td class="edit-price">$<?= $product['price'] ?></td>
+							<td data-price="<?= $product['price'] ?>" class="edit-price">$<?= $product['price'] ?></td>
 							<td>
-								<input type="number" name="" value="<?= $cart[intval($product['id'])] ?>" class="quantity">
+								<input max="<?= $product['inventory_count'] ?>" type="number" name="" value="<?= $cart[intval($product['id'])] ?>" class="quantity">
 							</td>
-							<td>$<?= $product['price'] * $cart[intval($product['id'])] ?></td>
+							<td class="price">$<?= $product['price'] * $cart[intval($product['id'])] ?></td>
 							<td>
 								<i class="delete-item fa fa-trash-o" aria-hidden="true"></i>
 							</td>
@@ -89,7 +107,7 @@
 		</div>
 		<div class="row">
 			<div class="column" id="summary">
-				<p><strong>Total: $<?= $total ?></strong></p>
+				<p class="total"><strong>Total: $<?= $total ?></strong></p>
 				<form>
 					<fieldset>
 						<a class="button button-clear button-large float-right" href="/categories">continue shopping</a>
@@ -105,7 +123,7 @@
 					<fieldset>
 						<!-- hidden inputs -->
 						<input type="hidden" name="cart" value=<?= json_encode($cart) ?>>
-						<input type="hidden" name="amount" value=<?= $total ?>>
+						<input class="hidden-total" type="hidden" name="amount" value=<?= $total ?>>
 
 						<h4>Shipping Information</h4>
 						<input value="Ghost" type="text" name="shipping_first_name" placeholder="First Name" id="shipping-first-name">
@@ -170,8 +188,7 @@
 
 		handler.open({
 			name: 'Demo Site',
-			description: '2 widgets',
-			amount: <?= $total ?> * 100
+			description: '2 widgets'
 		});
 	}
 </script>

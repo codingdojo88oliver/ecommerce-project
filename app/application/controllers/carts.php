@@ -37,6 +37,20 @@ class Carts extends CI_Controller {
 		$this->load->view('cart', $this->view_data);
 	}
 
+	public function update()
+	{
+		$cart = $this->session->userdata('cart');
+
+		$cart[$this->input->post('product_id')] = $this->input->post('quantity');
+
+		$this->session->set_userdata('cart', $cart);
+
+		$data = array("success" => true, "total" => 1);
+
+		echo json_encode($data);		
+	}
+
+
 	public function remove()
 	{
 		$cart = $this->session->userdata('cart');

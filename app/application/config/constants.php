@@ -23,6 +23,9 @@ define('ORDER_SHIPPED', 1);
 define('ORDER_RECEIVED', 2);
 define('ORDER_CANCELLED', 3);
 
+define('CUSTOMER', 0);
+define('ADMIN', 1);
+
 /*
 |--------------------------------------------------------------------------
 | File Stream Modes

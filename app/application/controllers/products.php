@@ -22,7 +22,7 @@ class Products extends CI_Controller {
 
 	public function create()
 	{
-		if($this->user_session['role'] == 1) {
+		if($this->user_session['role'] == ADMIN) {
 			$product_info = $this->input->post();
 
 			$config['upload_path'] = './assets/images/uploads/';
@@ -110,7 +110,7 @@ class Products extends CI_Controller {
 
 	public function remove($id)
 	{
-		if($this->user_session['role'] == 1) {
+		if($this->user_session['role'] == ADMIN) {
 			$this->Item->remove_product($id);
 			$this->session->set_flashdata('messages', 'Successfully deleted a product!');
 			redirect(base_url('admin/products'));
@@ -122,7 +122,7 @@ class Products extends CI_Controller {
 
 	public function update($id)
 	{
-		if($this->user_session['role'] == 1) {
+		if($this->user_session['role'] == ADMIN) {
 			$this->Item->update_product($id, $this->input->post());
 			$this->session->set_flashdata('messages', 'Successfully updated a product!');
 			redirect(base_url('admin/products'));

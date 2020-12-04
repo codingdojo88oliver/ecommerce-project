@@ -16,7 +16,7 @@ class Orders extends CI_Controller {
 
 	public function show($id)
 	{
-		if($this->user_session['role'] == 1) {
+		if($this->user_session['role'] == ADMIN) {
 			$this->view_data['order'] = $this->Order->get_order($id);
 
 			switch ($this->view_data['order']['status']) {

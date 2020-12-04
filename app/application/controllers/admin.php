@@ -15,7 +15,7 @@ class Admin extends CI_Controller {
 	
 	public function index()
 	{
-		if($this->user_session['role'] == 0) {		
+		if($this->user_session['role'] == CUSTOMER) {		
 			$this->load->view("login");
 		} else {
 			redirect(base_url('admin/orders'));
@@ -54,7 +54,7 @@ class Admin extends CI_Controller {
 	public function orders()
 	{
 
-		if($this->user_session['role'] == 1) {
+		if($this->user_session['role'] == ADMIN) {
 			$this->load->model('Order');
 			$orders = $this->Order->get_orders();
 			foreach ($orders as $key => $order) {
@@ -77,7 +77,7 @@ class Admin extends CI_Controller {
 	public function products()
 	{
 
-		if($this->user_session['role'] == 1) {
+		if($this->user_session['role'] == ADMIN) {
 			$this->load->model('Item');
 			$this->load->model('Category');
 

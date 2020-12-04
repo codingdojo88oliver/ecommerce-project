@@ -72,7 +72,18 @@ class Products extends CI_Controller {
 		}
 		else
 		{
-			$this->Item->add_product($product_info);
+			if($this->input->post('category')) {
+				// create new category
+				$this->load->model('Category');
+				$category_id = $this->Category->add_category($this->input->post('category'));
+			} else {
+				$category_id = $this->input->post('categories');
+			}
+
+			$product_id = $this->Item->add_product($product_info);
+
+			$this->load->model('Product_Category');
+			$this->Product_Category->add_product_category($product_id, $category_id);
 			$this->session->set_flashdata('message', 'Product Successfully Added!');
 		}
 

@@ -51,7 +51,9 @@ class Item extends CI_Model
 
 		$values = array($this->session->userdata("user_session")['id'], $data['name'], "<p>" .$data['description'] . "</p>", json_encode($data['file_names']), $data['price'], $data['inventory_count']);
 		
-		return $this->db->query($query, $values);
+		$this->db->query($query, $values);
+
+		return $this->db->insert_id();
 	}
 
 	public function remove_product($id)

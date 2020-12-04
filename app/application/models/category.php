@@ -36,4 +36,14 @@ class Category extends CI_Model
 		return $this->db->query($query, $values)->result_array();
 	}
 
+	public function add_category($name)
+	{
+        $insert_query = "INSERT INTO categories (name, created_at, updated_at)
+                         VALUES (?, NOW(), NOW())";
+        $values = (array($name));
+        
+        $this->db->query($insert_query, $values);
+        return $this->db->insert_id();		
+	}
+
 }

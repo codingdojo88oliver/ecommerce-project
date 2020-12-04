@@ -54,9 +54,11 @@ class Admin extends CI_Controller {
 		foreach ($orders as $key => $order) {
 			$this->view_data['orders'][] = [
 				'id' 				=> $order['id'],
+				'user_id' 			=> $order['user_id'],
 				'name' 				=> $order['name'],
 				'date' 				=> $order['order_date'],
-				'billing_address'   => $order['billing_address']
+				'billing_address'   => $order['billing_address'],
+				'status' 			=> $order['status'],
 			];
 		}
 

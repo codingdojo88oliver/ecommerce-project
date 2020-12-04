@@ -49,7 +49,7 @@ class Order extends CI_Model
 
 	public function get_orders()
 	{
-		$query = 'SELECT CONCAT(users.first_name, " ", users.last_name) as name, orders.id, 
+		$query = 'SELECT CONCAT(users.first_name, " ", users.last_name) as name, orders.id, orders.user_id, orders.status,
 				  CONCAT (
 				  	orders.billing_address_1, " ", orders.billing_address_2, 
 				  	" ", orders.billing_city, " ", orders.billing_zip
@@ -67,6 +67,16 @@ class Order extends CI_Model
 		$query = "SELECT * FROM orders WHERE orders.id = ?";
 		$values = array($id);
 		return $this->db->query($query, $values)->row_array();
+	}
+
+	public function update_status($data)
+	{
+		$query = "UPDATE orders SET status = ?
+				  WHERE id = ?
+				  AND user_id = ?";
+
+		$values = (array($data['status'], $data['order_id'], $data['user_id']));
+		return $this->db->query($query, $values);
 	}
 
 }

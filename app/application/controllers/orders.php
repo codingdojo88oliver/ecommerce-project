@@ -39,6 +39,17 @@ class Orders extends CI_Controller {
 	{
 		$this->load->view('success');
 	}
+
+	public function update()
+	{
+		if($this->Order->update_status($this->input->post())) {
+			$data = array("success" => true, "message" => "Saved!");
+		} else {
+			$data = array("success" => false, "message" => "Oops! Something went wrong!");
+		}
+
+		echo json_encode($data);
+	}
 }
 
 //end of order controller

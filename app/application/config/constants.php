@@ -19,6 +19,9 @@ define('DIR_READ_MODE', 0755);
 define('DIR_WRITE_MODE', 0777);
 
 define('ORDER_IN_PROGRESS', 0);
+define('ORDER_SHIPPED', 1);
+define('ORDER_RECEIVED', 2);
+define('ORDER_CANCELLED', 3);
 
 /*
 |--------------------------------------------------------------------------

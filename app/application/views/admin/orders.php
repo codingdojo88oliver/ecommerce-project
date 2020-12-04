@@ -16,6 +16,19 @@
 	<!-- You should properly set the path from the main file. -->
 	<script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
 
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$(".order-status").on("change", function(){
+
+				var form = $(this).parent().parent();
+
+				$.post(form.attr('action'), form.serialize(), function(data){
+					form.find('.message').text(data.message).fadeIn().fadeOut(1000);
+				}, "json");
+			});
+		});
+	</script>
+
 </head>
 <body>
 	<header id="admin">
@@ -74,14 +87,17 @@
 							<td><?= $order['date'] ?></td>
 							<td><?= $order['billing_address'] ?></td>
 							<td>
-								<form>
+								<form method="POST" action="/orders/update" class="order-update">
 									<fieldset>
-										<select id="sort">
-											<option value="14-17">Order in Process</option>
-											<option value="14-17">Shipped</option>
-											<option value="14-17">Cancelled</option>
-											<option value="0-13">Shipped</option>
+										<input type="hidden" name="order_id" value="<?= $order['id'] ?>">
+										<input type="hidden" name="user_id" value="<?= $order['user_id'] ?>">
+										<select name="status" class="order-status">
+											<option <?= (ORDER_IN_PROGRESS == $order['status'] ? "selected='selected'" : "" ) ?> value="<?= ORDER_IN_PROGRESS ?>">Order in Process</option>
+											<option <?= (ORDER_SHIPPED == $order['status'] ? "selected='selected'" : "" ) ?> value="<?= ORDER_SHIPPED ?>">Shipped</option>
+											<option <?= (ORDER_RECEIVED == $order['status'] ? "selected='selected'" : "" ) ?> value="<?= ORDER_RECEIVED ?>">Received</option>
+											<option <?= (ORDER_CANCELLED == $order['status'] ? "selected='selected'" : "" ) ?> value="<?= ORDER_CANCELLED ?>">Cancelled</option>
 										</select>
+										<small class="message"></small>
 									</fieldset>
 								</form>						
 							</td>

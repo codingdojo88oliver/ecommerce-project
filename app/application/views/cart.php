@@ -94,6 +94,7 @@
 							<td data-price="<?= $product['price'] ?>" class="edit-price">$<?= $product['price'] ?></td>
 							<td>
 								<input max="<?= $product['inventory_count'] ?>" type="number" name="" value="<?= $cart[intval($product['id'])] ?>" class="quantity">
+								<small><?= $product['inventory_count'] ?> stocks left</small>
 							</td>
 							<td class="price">$<?= $product['price'] * $cart[intval($product['id'])] ?></td>
 							<td>
@@ -187,8 +188,7 @@
 		});
 
 		handler.open({
-			name: 'Demo Site',
-			description: '2 widgets'
+			name: 'eCommerce Project'
 		});
 	}
 </script>

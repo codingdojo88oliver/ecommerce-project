@@ -147,11 +147,11 @@ class Carts extends CI_Controller {
 						// take note of the products that we can checkout.
 						$for_checkout_ids[$product['id']] = $product['inventory_count'];
 					} else {
-						$not_available_items[] .= $product['name'] . " ";
+						$not_available_items .= $product['name'] . " ";
 					}
 				}
 
-				if(empty($not_available_items)) {
+				if($not_available_items == "") {
 
 					try {
 
@@ -172,7 +172,7 @@ class Carts extends CI_Controller {
 						$order_result = $this->Order->create_order($user_id, $this->input->post(), $cart_formatted);
 
 						if($order_result === false) {
-							$data = array('success' => false, 'message' => 'Ooops! Problem with the order!');
+							$data = array('success' => false, 'message' => "<p>Please double check these items: <strong>" . $not_available_items . "</strong>. Stock may no longer be available or your specified quantity may be greater than the stocks available..</p>");
 						} else {
 							$this->Item->decrease_item_inventory_count($cart, $for_checkout_ids);
 
@@ -198,7 +198,7 @@ class Carts extends CI_Controller {
 					}
 								            
 				} else {				
-					$data = array('success' => false, 'message' => "<p>These items are no longer available: " . $not_available_items . ". You can either remove the item, or reduce the quantity.</p>");
+					$data = array('success' => false, 'message' => "<p>Please double check these items: <strong>" . $not_available_items . "</strong>. Stock may no longer be available or your specified quantity may be greater than the stocks available..</p>");
 				}
 			}
 

@@ -49,9 +49,7 @@ class Item extends CI_Model
 	{
 		$query = 'INSERT INTO products (user_id, name, description, images, price, inventory_count, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())';
 
-		$images = json_encode(["/assets/images/uploads/{$data['file_name']}"]);
-
-		$values = array($this->session->userdata("user_session")['id'], $data['name'], "<p>" .$data['description'] . "</p>", $images, $data['price'], $data['inventory_count']);
+		$values = array($this->session->userdata("user_session")['id'], $data['name'], "<p>" .$data['description'] . "</p>", json_encode($data['file_names']), $data['price'], $data['inventory_count']);
 		
 		return $this->db->query($query, $values);
 	}

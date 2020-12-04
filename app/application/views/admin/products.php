@@ -29,7 +29,7 @@
 				$("#edit-name").val($(this).data('name'));
 				$("#edit-description").val($(this).data('description'));
 				$("#edit-product-form").attr('action', '/products/update/' + $(this).data('id'));
-			});
+			});	
 		});
 	</script>
 
@@ -90,7 +90,7 @@
 									<label for="category">or Add new Category</label>
 									<input type="text" placeholder="New Category" id="category" name="category">
 									<label for="image">Images</label>
-									<input type="file" name="images" value="Upload" multiple>
+									<input type="file" name="images[]" value="Upload" multiple>
 									<div class="modal-footer">
 										<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 										<input class="button-primary" type="submit" value="Save">
@@ -129,7 +129,7 @@
 								<label for="edit-category">or Add new Category</label>
 								<input type="text" placeholder="New Category" id="edit-category" name="category">
 								<label for="edit-image">Images</label>
-								<input type="file" name="images" value="Upload" multiple id="edit-image">			<div class="modal-footer">
+								<input type="file" name="images[]" value="Upload" multiple id="edit-image">			<div class="modal-footer">
 									<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
 									<input class="button-primary" type="submit" value="Save">
 								</div>				
@@ -162,7 +162,7 @@
 					<tbody>
 <?php 					foreach($products as $product) { ?>
 						<tr>
-							<td><img src="<?= json_decode($product['images'])[0] ?>"></td>
+							<td><img height="326" width="485" src="<?= json_decode($product['images'])[0] ?>"></td>
 							<td><a href="/products/show/<?= $product['id'] ?>"><?= $product['id'] ?></a></td>
 							<td><?= $product['name'] ?></td>
 							<td><?= $product['inventory_count'] ?></td>

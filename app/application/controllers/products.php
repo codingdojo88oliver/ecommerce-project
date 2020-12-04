@@ -22,40 +22,60 @@ class Products extends CI_Controller {
 
 	public function create()
 	{
+		$product_info = $this->input->post();
+
 		$config['upload_path'] = './assets/images/uploads/';
-		$config['allowed_types'] = 'gif|jpg|png';
+		$config['allowed_types'] = 'gif|jpg|jpeg|png';
 		$config['max_size']	= '1000';
-		$config['max_width']  = '1280';
-		$config['max_height']  = '720';
+		$config['max_width']  = '2097';
+		$config['max_height']  = '1411';
 		$this->load->library('upload', $config);
 
-		if (!$this->upload->do_upload('images'))
+        $images = array();
+        $files 	= $_FILES['images'];
+
+        foreach ($_FILES['images']['name'] as $key => $image) {
+            $_FILES['images[]']['name']= $files['name'][$key];
+            $_FILES['images[]']['type']= $files['type'][$key];
+            $_FILES['images[]']['tmp_name']= $files['tmp_name'][$key];
+            $_FILES['images[]']['error']= $files['error'][$key];
+            $_FILES['images[]']['size']= $files['size'][$key];
+
+            $images[] = "/assets/images/uploads/" . $image;
+
+            $config['file_name'] = $image;
+
+            $this->upload->initialize($config);
+
+            if ($this->upload->do_upload('images[]')) {
+            	$this->upload->data();
+            } else {
+				$get_data = array('error' => $this->upload->display_errors());
+				$this->session->set_flashdata('error', $get_data['error']);
+            }
+        }
+
+        if($images) {
+        	$product_info['file_names'] = $images;
+        }
+
+		$this->load->library("form_validation");
+		$this->form_validation->set_rules("name", "Name", "trim|required");
+		$this->form_validation->set_rules("description", "Description", "trim|required");
+		$this->form_validation->set_rules("inventory_count", "Quantity", "trim|required");
+		$this->form_validation->set_rules("price", "Price", "trim|required");
+		$this->form_validation->set_rules("categories", "Categories", "trim|required");
+
+		if($this->form_validation->run() === FALSE)
 		{
-			$get_data = array('error' => $this->upload->display_errors());
-			$this->session->set_flashdata('error', $get_data['error']);
+			$this->session->set_flashdata("error", validation_errors());
 		}
 		else
 		{
-			$this->load->library("form_validation");
-			$this->form_validation->set_rules("name", "Name", "trim|required");
-			$this->form_validation->set_rules("description", "Description", "trim|required");
-			$this->form_validation->set_rules("inventory_count", "Quantity", "trim|required");
-			$this->form_validation->set_rules("price", "Price", "trim|required");
-			$this->form_validation->set_rules("categories", "Categories", "trim|required");
-
-			if($this->form_validation->run() === FALSE)
-			{
-				$this->session->set_flashdata("error", validation_errors());
-			}
-			else
-			{
-				$get_data = array('upload_data' => $this->upload->data());
-				$product_info = $this->input->post();
-				$product_info['file_name'] = $get_data['upload_data']['file_name'];
-				$this->Item->add_product($product_info);
-				$this->session->set_flashdata('message', 'Product Successfully Added!');
-			}
+			$this->Item->add_product($product_info);
+			$this->session->set_flashdata('message', 'Product Successfully Added!');
 		}
+
 
 		redirect(base_url('admin/products'));
 	}

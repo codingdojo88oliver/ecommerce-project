@@ -35,7 +35,6 @@
 		<section class="container">
 			<div class="row">
 				<div class="column" id="admin-navbar">
-					<a href="/admin/dashboard" class="button button-clear">Dashboard</a>
 					<a href="/admin/orders" class="button button-clear">Orders</a>
 					<a href="/admin/products" class="button button-clear">Products</a>
 				</div>

@@ -51,7 +51,7 @@ class Item extends CI_Model
 
 		$images = json_encode(["/assets/images/uploads/{$data['file_name']}"]);
 
-		$values = array($this->session->userdata("user_session")['id'], $data['name'], $data['description'], $images, $data['price'], $data['inventory_count']);
+		$values = array($this->session->userdata("user_session")['id'], $data['name'], "<p>" .$data['description'] . "</p>", $images, $data['price'], $data['inventory_count']);
 		
 		return $this->db->query($query, $values);
 	}
@@ -69,7 +69,7 @@ class Item extends CI_Model
 				  SET name = ?, description = ?, updated_at = NOW()
 				  WHERE id = ?;";
 
-		$values = array($data['name'], $data['description'], $id);
+		$values = array($data['name'], "<p>" . $data['description'] . "</p>", $id);
 
 		return $this->db->query($query, $values);
 	}

@@ -22,6 +22,15 @@ class Orders extends CI_Controller {
 			case ORDER_IN_PROGRESS:
 				$this->view_data['order']['status'] = 'Order in Progress';
 				break;
+			case ORDER_SHIPPED:
+				$this->view_data['order']['status'] = 'Order Shipped';
+				break;
+			case ORDER_RECEIVED:
+				$this->view_data['order']['status'] = 'Order Received';
+				break;
+			case ORDER_CANCELLED:
+				$this->view_data['order']['status'] = 'Order Cancelled';
+				break;
 			
 			default:
 				# code...

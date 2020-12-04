@@ -39,11 +39,11 @@
 		<section class="container">
 			<div class="row">
 				<div class="column" id="admin-navbar">
-					<input class="button button-clear" type="submit" value="Dashboard">
-					<input class="button button-clear" type="submit" value="Orders">
-					<input class="button button-clear" type="submit" value="Products">
+					<a href="/admin/dashboard" class="button button-clear">Dashboard</a>
+					<a href="/admin/orders" class="button button-clear">Orders</a>
+					<a href="/admin/products" class="button button-clear">Products</a>
 				</div>
-				<div class="column column-50 column-offset-25">Logout</div>
+				<div class="column column-50 column-offset-25"><a class="button button-clear" href="/admin/logout">Logout</a></div>
 			</div>
 		</section>
 	</header>

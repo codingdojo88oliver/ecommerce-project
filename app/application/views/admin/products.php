@@ -81,11 +81,12 @@
 									<label for="price">Price</label>
 									<input type="number" placeholder="10.00" id="price" name="price">
 									<label for="categories">Categories</label>
-									<select id="categories" name="categories">
+									<select id="categories" name="categories" multiple>
 <?php 								foreach($categories as $category) { ?>
 										<option value="<?= $category['id'] ?>"><?= $category['name'] ?></option>
 <?php 								} ?>									
 									</select>
+									<small>Note: Hold down the Ctrl (windows) or Command (Mac) button to select multiple options.</small>
 									<label for="category">or Add new Category</label>
 									<input type="text" placeholder="New Category" id="category" name="category">
 									<label for="image">Images</label>

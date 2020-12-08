@@ -21,7 +21,13 @@ class Admin extends CI_Controller {
 			redirect(base_url('admin/orders'));
 		}
 	}
-	
+
+	/* 
+	    DOCU: This function is for logging in an admin user.
+	    It asks for email and password. This function checks for valid emails, and checks for minimum password length.
+	    It also requires the email and password fields to be required before any data can be passed to the User model.
+	    Owner: Oliver
+	*/	
 	public function login()
 	{		
 		$this->load->library("form_validation");
@@ -50,7 +56,12 @@ class Admin extends CI_Controller {
 			}
 		}
 	}
-	
+
+	/* 
+	    DOCU: This function will simply load all the orders from the database.
+	    This can only be accessed by the ADMIN.
+	    Owner: Oliver
+	*/	
 	public function orders()
 	{
 
@@ -73,7 +84,12 @@ class Admin extends CI_Controller {
 			redirect(base_url('admin'));
 		}
 	}
-	
+
+	/* 
+	    DOCU: This function will simply load all the products from the database.
+	    This can only be accessed by the ADMIN.
+	    Owner: Oliver
+	*/		
 	public function products()
 	{
 

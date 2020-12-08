@@ -25,6 +25,10 @@ define('ORDER_CANCELLED', 3);
 
 define('CUSTOMER', 0);
 define('ADMIN', 1);
+define('SHIPPING_ADDRESS_TYPE', 1);
+define('BILLING_ADDRESS_TYPE', 2);
+
+define('SHIPPING_FEE', 0);
 
 /*
 |--------------------------------------------------------------------------

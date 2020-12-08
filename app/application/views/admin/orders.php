@@ -23,6 +23,7 @@
 				var form = $(this).parent().parent();
 
 				$.post(form.attr('action'), form.serialize(), function(data){
+					// make sure to always check the data.status
 					form.find('.message').text(data.message).fadeIn().fadeOut(1000);
 				}, "json");
 			});
@@ -74,7 +75,7 @@
 							<th>Order ID</th>
 							<th>Name</th>
 							<th>Date</th>
-							<th>Billing Address Total</th>
+							<th>Billing Address</th>
 							<th>Status</th>
 						</tr>
 					</thead>

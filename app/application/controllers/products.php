@@ -14,17 +14,15 @@ class Products extends CI_Controller {
 		$this->view_data['user_session'] = $this->user_session = $this->session->userdata("user_session");
 	}
 
-	public function index()
-	{
-		$this->view_data['products'] = $this->Item->get_items();
-		$this->load->view('products', $this->view_data);
-	}
-
+	/*
+		DOCU: This is the method that handles product creation. This is only accessible by the ADMINs.
+	*/
 	public function create()
 	{
 		if($this->user_session['role'] == ADMIN) {
 			$product_info = $this->input->post();
 
+			/* TODO: Put all the process of uploading the product's images in it's own method */
 			$config['upload_path'] = './assets/images/uploads/';
 			$config['allowed_types'] = 'gif|jpg|jpeg|png';
 			$config['max_size']	= '1000';
@@ -60,6 +58,7 @@ class Products extends CI_Controller {
 	        	$product_info['file_names'] = $images;
 	        }
 
+	        /* After doing all the image upload processes, we validate the form. */
 			$this->load->library("form_validation");
 			$this->form_validation->set_rules("name", "Name", "trim|required");
 			$this->form_validation->set_rules("description", "Description", "trim|required");
@@ -73,8 +72,12 @@ class Products extends CI_Controller {
 			}
 			else
 			{
+				/* 
+					DOCU: If "or Add New Category" input field was filled, we create a new category
+					TODO: For now, it ignores the categories dropdown if "or Add New Category" is filled.
+					Make sure we don't ignore it and still allow multiple categories for a specific product.
+				*/
 				if($this->input->post('category')) {
-					// create new category
 					$this->load->model('Category');
 					$category_id = $this->Category->add_category($this->input->post('category'));
 				} else {
@@ -96,10 +99,19 @@ class Products extends CI_Controller {
 		}
 	}
 
+	/* 
+		DOCU: A page where we show a product's detail. We also show the similar items in this page based on the product's
+		category_id.
+		Owner: Oliver
+	*/
 	public function show($id)
 	{
+		/*
+			TODO: The code block below is a repeating code to count the cart items. We should have a helper class instead of
+			having another method in this class. Right now the Categories controller has a count_cart_items() method that does
+			the same thing as the code block below
+		*/
 		$this->view_data['cart_count'] = 0;
-		
 		if($this->session->userdata('cart')) {
 			$this->view_data['cart_count'] = 0;
 			foreach($this->session->userdata('cart') as $quantity) {
@@ -114,6 +126,10 @@ class Products extends CI_Controller {
 		$this->load->view('product-show', $this->view_data);
 	}
 
+	/* 
+		DOCU: A method to remove a product from the database. Only accessible by the ADMINs.
+		Owner: Oliver
+	*/
 	public function remove($id)
 	{
 		if($this->user_session['role'] == ADMIN) {
@@ -126,6 +142,10 @@ class Products extends CI_Controller {
 		}
 	}
 
+	/* 
+		DOCU: A method to update a product in the database. Only accessible by the ADMINs.
+		Owner: Oliver
+	*/
 	public function update($id)
 	{
 		if($this->user_session['role'] == ADMIN) {

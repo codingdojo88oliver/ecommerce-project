@@ -84,6 +84,7 @@ class Order extends CI_Model
 						  	 JOIN addresses AS billing
 						  	 ON billing.id = orders.billing_address_id
 						     WHERE orders.id = ?";
+						     
 		$get_order_values = array($id);
 
 		return $this->db->query($get_order_query, $get_order_values)->row_array();

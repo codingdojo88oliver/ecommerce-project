@@ -21,6 +21,22 @@ class Categories extends CI_Controller {
 
 	}
 
+	/*
+		DOCU: This is the default page the customers should see when they visit the app. It will list all the products, and by default, we show all the products under all categories.
+		Owner: Oliver
+	*/
+	public function index()
+	{
+		$this->load->model('Item');
+
+		$this->view_data['categories'] 	= $this->Category->get_categories();
+		$this->view_data['products'] 	= $this->Item->get_items();
+		$products_count 				= count($this->view_data['products']);
+		$this->view_data['pages'] 		= ceil($products_count / PRODUCTS_LIMIT);
+
+		$this->load->view('categories', $this->view_data);
+	}
+
 	/* 
 		DOCU: A method to count items in the cart. It grabs the cart session. 
 		If there's no cart session, we set the cart count to zero.
@@ -37,19 +53,6 @@ class Categories extends CI_Controller {
 		}
 
 		return $cart_count;
-	}
-
-	/*
-		DOCU: This is the default page the customers should see when they visit the app. It will list all the products, and by default, we show all the products under all categories.
-		Owner: Oliver
-	*/
-	public function index()
-	{
-		$this->load->model('Item');
-		$this->view_data['categories'] = $this->Category->get_categories();
-		$this->view_data['products'] = $this->Item->get_items();
-
-		$this->load->view('categories', $this->view_data);
 	}
 
 	/*

@@ -15,6 +15,18 @@
 
 	<!-- You should properly set the path from the main file. -->
 	<script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$("#full-pagination").on("click", '.page_number', function(){
+				var page = $(this).attr('data-page');
+				var search = $(this).attr('data-search');
+				$.get('/products/get_items', { page_number: page, search: search }, function(data){
+					$("#products-list").html(data.html);
+				}, "json");
+			});
+		})	
+	</script>
+
 
 </head>
 <body>
@@ -70,25 +82,27 @@
 						</form>
 					</div>
 				</div>
-<?php 	foreach ($products as $key => $product) {
-			if($key % 5 == 0) { ?>
-				<div class="row">
-					<div class="products column column-78">
+				<div id="products-list">
+<?php 		foreach ($products as $key => $product) {
+				if($key % 5 == 0) { ?>
+					<div class="row">
+						<div class="products column column-78">
 <?php 		} ?>
-						<div>
-							<a href="/products/show/<?= $product['id'] ?>"><img class="" src="<?= json_decode($product['images'])[0] ?>"></a>
-							<p><small><?= $product['name'] ?></small></p>
-							<p class="float-right"><strong>$<?= $product['price'] ?></strong></p>
+							<div>
+								<a href="/products/show/<?= $product['id'] ?>"><img class="" src="<?= json_decode($product['images'])[0] ?>"></a>
+								<p><small><?= $product['name'] ?></small></p>
+								<p class="float-right"><strong>$<?= $product['price'] ?></strong></p>
+							</div>
+<?php 			if(($key != 0 || count($products) == 1) && ($key % 4 == 0 || $key + 1 == count($products))) { ?>
 						</div>
-<?php 		if(($key != 0 || count($products) == 1) && ($key % 4 == 0 || $key + 1 == count($products))) { ?>
 					</div>
+<?php 			}  
+			} ?>
 				</div>
-<?php 		}  
-		} ?>
 				<div class="row">
 					<div class="column" id="full-pagination">
-						<input class="button button-clear" type="submit" value="1">
-						<input class="button button-clear" type="submit" value="2">
+						<input class="button button-clear page_number" type="submit" data-page="1" value="1" data-search="">
+						<input class="button button-clear page_number" type="submit" data-page="2" value="2" data-search="">
 						<input class="button button-clear" type="submit" value="3">
 						<input class="button button-clear" type="submit" value="4">
 						<input class="button button-clear" type="submit" value="5">

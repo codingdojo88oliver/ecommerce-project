@@ -2,10 +2,66 @@
 
 class Item extends CI_Model
 {
-	public function get_items()
+	public function get_items($item_data = NULL)
 	{
-		$get_items_query = 'SELECT * FROM products ORDER BY id DESC';
-		return $this->db->query($get_items_query)->result_array();
+		$get_items_query = "SELECT * FROM products LIMIT ? OFFSET ?";
+
+		if($item_data == NULL) {
+			$where = array(PRODUCTS_LIMIT, 0);
+		}
+
+		else if(isset($item_data['page_number']) && isset($item_data['search']))
+		{
+
+			if($item_data['search'] == "") {
+				$where = array(PRODUCTS_LIMIT, $item_data['page_number']);
+			}
+			else
+			{
+				if(is_array($item_data['search']))
+				{
+					// $get_items_query = "SELECT * FROM products WHERE registered_datetime >= ? AND registered_datetime <= ? LIMIT ? OFFSET ?";
+					// $where = array($item_data['search'][0], $item_data['search'][1], PRODUCTS_LIMIT, $item_data['page_number']);
+				}
+				else
+				{
+					$get_items_query = "SELECT * FROM products WHERE name LIKE ? LIMIT ? OFFSET ?";
+					$where = array('%'.$item_data['search'].'%', PRODUCTS_LIMIT, $item_data['page_number']);						
+				}
+			}
+		}
+		// var_dump($get_items_query); die();
+		return $this->db->query($get_items_query, $where)->result_array();
+
+		// if($data == NULL)
+		// {
+		// 	$get_items_query = 'SELECT * FROM products ORDER BY id DESC';
+		// 	$where_query = "";
+		// }
+		// else if(isset($data['name']))
+		// {
+		// 	$sql = "SELECT * FROM products WHERE name LIKE ?";
+		// 	$where_query = '%'.$data['name'].'%';
+		// }
+
+		// return $this->db->query($get_items_query, $where_query)->result_array();		
+
+	}
+
+	public function items_count($data = NULL)
+	{
+		if($data == NULL)
+		{
+			$get_items_count_query = "SELECT count(id) as count FROM products";
+			$where_query = "";
+		}
+		else if(isset($data['name']))
+		{
+			$get_items_count_query = "SELECT count(id) as count FROM products WHERE name LIKE ?";
+			$where_query = '%'.$data['name'].'%';
+		}
+
+		return $this->db->query($get_items_count_query, $where_query)->row_array();	
 	}
 
 	public function get_item($id)
@@ -100,6 +156,7 @@ class Item extends CI_Model
 
 		return $this->db->query($add_to_cart_query, $add_to_cart_values)->row_array();
 	}
+
 
 	public function decrease_item_inventory_count($cart, $stock)
 	{

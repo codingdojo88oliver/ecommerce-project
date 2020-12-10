@@ -16,6 +16,7 @@ class Products extends CI_Controller {
 
 	/*
 		DOCU: This is the method that handles product creation. This is only accessible by the ADMINs.
+		Owner: Oliver
 	*/
 	public function create()
 	{
@@ -97,6 +98,102 @@ class Products extends CI_Controller {
 			$this->session->set_flashdata("error", "Unauthorized access!");
 			redirect(base_url('admin'));
 		}
+	}
+
+	/*
+		DOCU: Method to get all items from the products table. This function will be called via $.get method 
+		whenever a user clicks on a pagination number. This function will return a partial that will contain
+		a list of products.
+		Owner: Oliver
+	*/
+	public function get_items()
+	{
+		$post_data = $this->input->post();
+
+		if($this->input->get('page_number'))
+		{
+			if($this->input->get('search') != "")
+			{
+				if(strpos($this->input->get('search'), ',') !== false)
+				{
+					$product_data = array(
+						"search" => explode(",", $this->input->get('search')),
+						"page_number" => ($this->input->get('page_number') -1) * PRODUCTS_LIMIT
+					);
+				}
+				else
+				{
+					$product_data = array(
+						"search" => $this->input->get('search'),
+						"page_number" => ($this->input->get('page_number') -1) * PRODUCTS_LIMIT
+					);					
+				}
+			}
+			else
+			{
+				$product_data = array(
+					"search" => "",
+					"page_number" => ($this->input->get('page_number') -1) * PRODUCTS_LIMIT
+				);
+			}
+		}
+
+		//get products by name
+		if(isset($post_data['name']))
+		{
+			$product_data['name'] 	= $post_data['name'];
+			$products_count 		= $this->get_items_count($post_data);
+			$pages 					= ceil($products_count / PRODUCTS_LIMIT);
+			$data['pagination'] 	= $this->pagination($pages, $post_data);
+		}
+
+		$products = $this->Item->get_items($product_data);
+		
+		$data['html'] = "";
+		foreach($products as $key => $product)
+		{
+			$product['key'] = $key;
+			$data['html'] .= $this->load->view('partials/products_list_item', [
+				'product' 	=> $product,
+				'key' 	  	=> $key,
+				'products' 	=> $products,
+			], TRUE);
+		}
+
+		echo json_encode($data);		
+	}
+
+	protected function get_items_count($data = NULL)
+	{
+		if($data == NULL) {
+			$products = $this->Item->items_count();
+		}
+		else if(isset($data['name'])) {
+			$products = $this->Item->items_count($data);
+		}
+
+		return $products['count'];
+	}
+
+
+	protected function pagination($pages, $search_data)
+	{
+		$data['html'] = "";
+
+		if(isset($search_data['name']))
+		{
+			foreach(range(1, $pages) as $page) 
+			{
+				$this->view_data = array(
+					'search' => $search_data['name'],
+					'page' => $page
+				);
+
+				$data['html'] .= $this->load->view('partials/paginate_button', $this->view_data, TRUE);
+			}			
+		}
+
+		return $data['html'];
 	}
 
 	/* 

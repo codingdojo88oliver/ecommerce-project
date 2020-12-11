@@ -3,6 +3,13 @@
 class Order extends CI_Model
 {
 
+	/*
+		DOCU: This is the function that gets called if the checkout is valid. Below is the high level overview of what this function does:
+			1. Saves new addresses to the database
+			2. Saves an order record to the database.
+		TODO: It should only require 2 parameters or even 1. $user_id can be removed and can be integrated to either $user_info or $cart. and $user_info can be removed and can just be integrated to $cart
+		Owner: Oliver
+	*/
 	public function create_order($user_id, $user_info, $cart)
 	{
 		$amount = $user_info['amount'];
@@ -50,6 +57,11 @@ class Order extends CI_Model
 		}
 	}
 
+	/*
+		DOCU: Get all the orders from the database. Only accessible by the ADMINS
+		TODO: Make sure to add a validation to only allow admins
+		Owner: Oliver
+	*/
 	public function get_orders()
 	{
 		$get_orders_query = 'SELECT CONCAT(users.first_name, " ", users.last_name) as name, 
@@ -68,6 +80,11 @@ class Order extends CI_Model
 		return $this->db->query($get_orders_query)->result_array();
 	}
 
+	/*
+		DOCU: Get the order details of a specific order. Can only be accessed by the ADMINs
+		TODO: Make sure to add a validation to only allow admins
+		Owner: Oliver
+	*/
 	public function get_order($id)
 	{
 		$get_order_query  = "SELECT orders.*, CONCAT(shipping.first_name, ' ', shipping.last_name) AS shipping_full_name,
@@ -90,6 +107,11 @@ class Order extends CI_Model
 		return $this->db->query($get_order_query, $get_order_values)->row_array();
 	}
 
+	/*
+		DOCU: This is the function that updates the order status of a product that is only accessible by ADMINS
+		TODO: Make sure to add a validation to only allow admins
+		Owner: Oliver
+	*/
 	public function update_status($data)
 	{
 		$update_status_query  = "UPDATE orders SET status = ?

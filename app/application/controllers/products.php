@@ -110,22 +110,22 @@ class Products extends CI_Controller {
 	{
 		$post_data = $this->input->post();
 
-		if($this->input->get('page_number'))
+		if($this->input->post('page_number'))
 		{
-			if($this->input->get('search') != "")
+			if($this->input->post('search') != "")
 			{
-				if(strpos($this->input->get('search'), ',') !== false)
+				if(strpos($this->input->post('search'), ',') !== false)
 				{
 					$product_data = array(
-						"search" => explode(",", $this->input->get('search')),
-						"page_number" => ($this->input->get('page_number') -1) * PRODUCTS_LIMIT
+						"search" => explode(",", $this->input->post('search')),
+						"page_number" => ($this->input->post('page_number') -1) * PRODUCTS_LIMIT
 					);
 				}
 				else
 				{
 					$product_data = array(
-						"search" => $this->input->get('search'),
-						"page_number" => ($this->input->get('page_number') -1) * PRODUCTS_LIMIT
+						"search" => $this->input->post('search'),
+						"page_number" => ($this->input->post('page_number') -1) * PRODUCTS_LIMIT
 					);					
 				}
 			}
@@ -133,7 +133,7 @@ class Products extends CI_Controller {
 			{
 				$product_data = array(
 					"search" => "",
-					"page_number" => ($this->input->get('page_number') -1) * PRODUCTS_LIMIT
+					"page_number" => ($this->input->post('page_number') -1) * PRODUCTS_LIMIT
 				);
 			}
 		}
@@ -163,6 +163,12 @@ class Products extends CI_Controller {
 		echo json_encode($data);		
 	}
 
+	/*
+
+		DOCU: A method to count products based on $data. Where data can be the pagination offset and limit values.
+		TODO: This gets copy and pasted in the Categories controller. Make sure to not repeat code.
+		Owner: Oliver
+	*/
 	protected function get_items_count($data = NULL)
 	{
 		if($data == NULL) {

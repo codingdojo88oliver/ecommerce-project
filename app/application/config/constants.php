@@ -31,7 +31,7 @@ define('BILLING_ADDRESS_TYPE', 2);
 define('SHIPPING_FEE', 0);
 
 /* Used for Pagination */
-define('PRODUCTS_LIMIT', 10);
+define('PRODUCTS_LIMIT', 9);
 
 /*
 |--------------------------------------------------------------------------

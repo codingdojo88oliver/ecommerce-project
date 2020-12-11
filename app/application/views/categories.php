@@ -17,17 +17,36 @@
 	<script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
 	<script type="text/javascript">
 		$(document).ready(function(){
+			/* Listens to click events for the pagination numbers */
 			$("#full-pagination").on("click", '.page_number', function(){
 				var page = $(this).attr('data-page');
 				var search = $(this).attr('data-search');
-				$.get('/products/get_items', { page_number: page, search: search }, function(data){
+				$("#pagination-form #page").val(page);
+				$("#pagination-form #search").val(search);
+				$("#pagination-form").submit();
+			});
+
+			/* Submits a hidden pagination form */
+			$("#pagination-form").on("submit", function(){
+				var form = $(this);
+
+				$.post(form.attr('action'), form.serialize(), function(data){
 					$("#products-list").html(data.html);
 				}, "json");
+
+				return false;	
+			});
+
+			$("#filter-products").on("submit", "#search", function(){
+				var form = $(this);
+				$.post(form.attr('action'), form.serialize(), function(data){
+					$("#products-list").html(data.html);
+					$("#full-pagination").html(data.pagination);
+				}, "json");
+				return false;
 			});
 		})	
 	</script>
-
-
 </head>
 <body>
 	<header>
@@ -52,7 +71,7 @@
 			</div>
 			<div class="column column-78">
 				<div class="row clearfix">
-					<h5 class="column">Tshirts (page 2)</h5>
+					<h5 class="column"><?= $selected_category ?></h5>
 					<div class="column" id="simple-pagination">
 						<input class="button button-clear" type="submit" value="first">
 						<input class="button button-clear" type="submit" value="prev">
@@ -62,9 +81,9 @@
 				</div>
 				<div class="row clearfix">
 					<div class="column" id="filter-products">
-						<form>
+						<form id="search" method="post" action="/products/get_items">
 							<fieldset>
-								<input type="text" placeholder="Product Name" id="product-name">
+								<input type="text" placeholder="Product Name" id="product-name" name="name">
 								<input class="button button-clear float-right" type="submit" value="search">
 							</fieldset>
 						</form>						
@@ -101,18 +120,15 @@
 				</div>
 				<div class="row">
 					<div class="column" id="full-pagination">
-						<input class="button button-clear page_number" type="submit" data-page="1" value="1" data-search="">
-						<input class="button button-clear page_number" type="submit" data-page="2" value="2" data-search="">
-						<input class="button button-clear" type="submit" value="3">
-						<input class="button button-clear" type="submit" value="4">
-						<input class="button button-clear" type="submit" value="5">
-						<input class="button button-clear" type="submit" value="6">
-						<input class="button button-clear" type="submit" value="7">
-						<input class="button button-clear" type="submit" value="8">
-						<input class="button button-clear" type="submit" value="9">
-						<input class="button button-clear" type="submit" value="10">
-						<input class="button button-clear" type="submit" value="&#8594;">
-					</div>					
+<?php 				foreach (range(1, $pages) as $page) 
+					{ ?>
+						<button class="button button-clear page_number" data-page="<?= $page; ?>" data-search=""><?= $page; ?></button>
+<?php 				} ?>
+					</div>
+					<form id="pagination-form" method="POST" action="/products/get_items">
+						<input type="hidden" name="page_number" id="page">
+						<input type="hidden" name="search" id="search">
+					</form>				
 				</div>
 			</div>
 		</div>

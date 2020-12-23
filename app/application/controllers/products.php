@@ -192,18 +192,9 @@ class Products extends CI_Controller {
 	*/
 	public function show($id)
 	{
-		/*
-			TODO: The code block below is a repeating code to count the cart items. We should have a helper class instead of
-			having another method in this class. Right now the Categories controller has a count_cart_items() method that does
-			the same thing as the code block below
-		*/
-		$this->view_data['cart_count'] = 0;
-		if($this->session->userdata('cart')) {
-			$this->view_data['cart_count'] = 0;
-			foreach($this->session->userdata('cart') as $quantity) {
-				$this->view_data['cart_count'] += $quantity;
-			}
-		}
+		$this->load->library('items_library');
+
+		$this->view_data['cart_count'] = $this->items_library->count_cart_items();
 
 		$this->view_data['product'] = $this->Item->get_item($id);
 

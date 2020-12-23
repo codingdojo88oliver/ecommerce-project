@@ -16,7 +16,9 @@ class Categories extends CI_Controller {
 			DOCU: Since both index and show methods display the Cart count at the top of each pages, 
 			we call this simple method to count the total number of items in our cart.
 		*/
-		$this->view_data['cart_count'] = $this->count_cart_items();
+		$this->load->library('items_library');
+
+		$this->view_data['cart_count'] = $this->items_library->count_cart_items();
 
 	}
 
@@ -37,24 +39,6 @@ class Categories extends CI_Controller {
 		$this->load->view('categories', $this->view_data);
 	}
 
-	/* 
-		DOCU: A method to count items in the cart. It grabs the cart session. 
-		If there's no cart session, we set the cart count to zero.
-		Owner: Oliver
-	*/
-	protected function count_cart_items()
-	{
-		$cart_count = 0;
-
-		if($this->session->userdata('cart')) {
-			foreach($this->session->userdata('cart') as $quantity) {
-				$cart_count += $quantity;
-			}
-		}
-
-		return $cart_count;
-	}
-
 	/*
 		DOCU: This is the function that will show all the products under a particular category.
 		Owner: Oliver
@@ -62,7 +46,7 @@ class Categories extends CI_Controller {
 	public function show($id)
 	{
 		$this->load->library('items_library');
-		
+
 		$this->view_data['categories'] 			= $this->Category->get_categories();
 		$this->view_data['products'] 			= $this->Category->get_products($id);
 		$this->view_data['selected_category'] 	= $this->Category->get_category($id)['name'];

@@ -25,4 +25,22 @@ class Items_Library {
 
 		return $products['count'];
 	}
+
+	/* 
+		DOCU: A method to count items in the cart. It grabs the cart session. 
+		If there's no cart session, we set the cart count to zero.
+		Owner: Oliver
+	*/
+	public function count_cart_items()
+	{
+		$cart_count = 0;
+
+		if($this->CI->session->userdata('cart')) {
+			foreach($this->CI->session->userdata('cart') as $quantity) {
+				$cart_count += $quantity;
+			}
+		}
+
+		return $cart_count;
+	}
 }

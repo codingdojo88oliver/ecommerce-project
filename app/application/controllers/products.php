@@ -141,8 +141,10 @@ class Products extends CI_Controller {
 		//get products by name
 		if(isset($post_data['name']))
 		{
+			$this->load->library('items_library');
+
 			$product_data['name'] 	= $post_data['name'];
-			$products_count 		= $this->get_items_count($post_data);
+			$products_count 		= $this->items_library->get_items_count($post_data);
 			$pages 					= ceil($products_count / PRODUCTS_LIMIT);
 			$data['pagination'] 	= $this->pagination($pages, $post_data);
 		}
@@ -162,25 +164,6 @@ class Products extends CI_Controller {
 
 		echo json_encode($data);		
 	}
-
-	/*
-
-		DOCU: A method to count products based on $data. Where data can be the pagination offset and limit values.
-		TODO: This gets copy and pasted in the Categories controller. Make sure to not repeat code.
-		Owner: Oliver
-	*/
-	protected function get_items_count($data = NULL)
-	{
-		if($data == NULL) {
-			$products = $this->Item->items_count();
-		}
-		else if(isset($data['name'])) {
-			$products = $this->Item->items_count($data);
-		}
-
-		return $products['count'];
-	}
-
 
 	protected function pagination($pages, $search_data)
 	{

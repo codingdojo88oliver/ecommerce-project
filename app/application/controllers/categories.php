@@ -9,7 +9,6 @@ class Categories extends CI_Controller {
 	{
 		parent::__construct();
 		$this->load->model('Category');
-		$this->load->library('form_validation');
 		$this->load->helper(array('form', 'url'));
 		$this->view_data['user_session'] = $this->user_session = $this->session->userdata("user_session");
 
@@ -27,11 +26,12 @@ class Categories extends CI_Controller {
 	*/
 	public function index()
 	{
-		$this->load->model('Item');
+		$this->load->library('items_library');
 
+		$this->load->model('Item');
 		$this->view_data['categories'] 			= $this->Category->get_categories();
 		$this->view_data['products'] 			= $this->Item->get_items();
-		$products_count 						= $this->get_items_count();
+		$products_count 						= $this->items_library->get_items_count();
 		$this->view_data['pages'] 				= ceil($products_count / PRODUCTS_LIMIT);
 		$this->view_data['selected_category'] 	= 'All';
 		$this->load->view('categories', $this->view_data);
@@ -61,33 +61,15 @@ class Categories extends CI_Controller {
 	*/
 	public function show($id)
 	{
+		$this->load->library('items_library');
+		
 		$this->view_data['categories'] 			= $this->Category->get_categories();
 		$this->view_data['products'] 			= $this->Category->get_products($id);
 		$this->view_data['selected_category'] 	= $this->Category->get_category($id)['name'];
-		$products_count 						= $this->get_items_count();
+		$products_count 						= $this->items->get_items_count();
 		$this->view_data['pages'] 				= ceil($products_count / PRODUCTS_LIMIT);
 		$this->load->view('categories',  $this->view_data);
 
-	}
-
-	/*
-
-		DOCU: A method to count products based on $data. Where data can be the pagination offset and limit values.
-		TODO: This gets copy and pasted in the Categories controller. Make sure to not repeat code.
-		Owner: Oliver
-	*/
-	protected function get_items_count($data = NULL)
-	{
-		$this->load->model('Item');
-
-		if($data == NULL) {
-			$products = $this->Item->items_count();
-		}
-		else if(isset($data['name'])) {
-			$products = $this->Item->items_count($data);
-		}
-
-		return $products['count'];
 	}
 }
 

@@ -94,12 +94,15 @@ class Admin extends CI_Controller {
 	{
 
 		if($this->user_session['role'] == ADMIN) {
+			$this->load->library('items_library');
+
 			$this->load->model('Item');
 			$this->load->model('Category');
 
-			$this->view_data['products'] 	= $this->Item->get_items();
-			$this->view_data['categories'] 	= $this->Category->get_categories();
-			
+			$this->view_data['products'] 			= $this->Item->get_items();
+			$this->view_data['categories'] 			= $this->Category->get_categories();
+			$products_count 						= $this->items_library->get_items_count();
+			$this->view_data['pages'] 				= ceil($products_count / PRODUCTS_LIMIT);
 			$this->load->view('admin/products', $this->view_data);
 		} else {
 			redirect(base_url('admin'));

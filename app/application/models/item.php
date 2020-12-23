@@ -22,7 +22,6 @@ class Item extends CI_Model
 
 		else if(isset($item_data['page_number']) && isset($item_data['search']))
 		{
-			var_dump($item_data); die();
 			if($item_data['search'] == "") {
 				$where = array(PRODUCTS_LIMIT, $item_data['page_number']);
 			}

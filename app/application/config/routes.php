@@ -39,7 +39,7 @@
 */
 
 
-$route['default_controller'] = "projects";
+$route['default_controller'] = "categories";
 $route['cart'] = 'carts';
 $route['404_override'] = '';
 
